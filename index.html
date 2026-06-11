@@ -105,9 +105,15 @@ body{
    context that would trap the mobile sidebar below the fixed backdrop */
 .screen.visible{opacity:1;transform:none;}
 
-/* ============ logo ============ */
+/* ============ logo & icon system ============ */
 .sr-logo{display:inline-block;line-height:0;}
-.sr-logo svg{display:block;}
+.sr-logo img{display:block;width:auto;}
+.ni-icon{flex:0 0 auto;width:28px;height:28px;object-fit:contain;display:block;}
+.addon-icon{width:48px;height:48px;object-fit:contain;display:block;margin-bottom:1.1rem;}
+.medallion-img{
+  display:block;width:120px;height:120px;object-fit:contain;margin:0 auto 1.75rem;
+  filter:drop-shadow(0 0 28px rgba(212,169,87,0.18));
+}
 
 /* ============ LOGIN ============ */
 #screen-login{
@@ -661,9 +667,11 @@ const customer = {
   accountCreated: "June 8, 2026",
 };
 
+const ICON_BASE = "https://dennisnickens.com/assessment/icons";
+
 const LENSES = [
   {
-    id:"behavior", glyph:"◈", title:"Behavior Profile",
+    id:"behavior", glyph:"◈", icon:`${ICON_BASE}/pillars/01-core.png`, title:"Behavior Profile",
     deck:"How you instinctively move through the world.",
     archetype:"The Caretaker",
     prose:[
@@ -676,7 +684,7 @@ const LENSES = [
     ]}
   },
   {
-    id:"personality", glyph:"✦", title:"Personality Code",
+    id:"personality", glyph:"✦", icon:`${ICON_BASE}/pillars/02-lens.png`, title:"Personality Code",
     deck:"The architecture beneath your outward style.",
     archetype:"The Architect-Harmonizer",
     prose:[
@@ -686,7 +694,7 @@ const LENSES = [
     ]
   },
   {
-    id:"action", glyph:"❖", title:"Action Style",
+    id:"action", glyph:"❖", icon:`${ICON_BASE}/pillars/03-drive.png`, title:"Action Style",
     deck:"How you convert intention into motion.",
     archetype:"The Steady Finisher",
     prose:[
@@ -696,7 +704,7 @@ const LENSES = [
     ]
   },
   {
-    id:"connection", glyph:"❧", title:"Connection Currency",
+    id:"connection", glyph:"❧", icon:`${ICON_BASE}/pillars/04-currency.png`, title:"Connection Currency",
     deck:"The language in which you give and receive care.",
     archetype:"Quality Presence",
     prose:[
@@ -709,7 +717,7 @@ const LENSES = [
     ]}
   },
   {
-    id:"learning", glyph:"✺", title:"Learning Channel",
+    id:"learning", glyph:"✺", icon:`${ICON_BASE}/pillars/05-channel.png`, title:"Learning Channel",
     deck:"How new information actually gets into you.",
     archetype:"Visual-Reflective",
     prose:[
@@ -719,7 +727,7 @@ const LENSES = [
     ]
   },
   {
-    id:"spiritual-wiring", glyph:"☩", title:"Spiritual Wiring",
+    id:"spiritual-wiring", glyph:"☩", icon:`${ICON_BASE}/pillars/06-compass.png`, title:"Spiritual Wiring",
     deck:"The posture of your inner life.",
     archetype:"The Intercessor",
     prose:[
@@ -729,7 +737,7 @@ const LENSES = [
     ]
   },
   {
-    id:"spiritual-gifts", glyph:"✣", title:"Spiritual Gifts",
+    id:"spiritual-gifts", glyph:"✣", icon:`${ICON_BASE}/pillars/07-gifts.png`, title:"Spiritual Gifts",
     deck:"What you have been given to give.",
     archetype:"Discernment · Encouragement · Teaching",
     prose:[
@@ -742,13 +750,13 @@ const LENSES = [
 
 const ADDONS = [
   {
-    id:"misalignment", glyph:"⚯", title:"Misalignment Map",
+    id:"misalignment", glyph:"⚯", icon:`${ICON_BASE}/synthesis-sections/misalignment-map.png`, title:"Misalignment Map",
     desc:"Pinpoints where your daily life is running against your wiring — and what it is costing you.",
     onDashboard:false,
     deck:"Where your life and your wiring disagree.", archetype:null, prose:[]
   },
   {
-    id:"career", glyph:"◬", title:"Career Alignment Deep-Dive",
+    id:"career", glyph:"◬", icon:`${ICON_BASE}/synthesis-sections/career-alignment.png`, title:"Career Alignment Deep-Dive",
     desc:"Maps your wiring against your current role and shows where your work fits you — and where it fights you.",
     onDashboard:true,
     deck:"Your wiring, measured against your work.",
@@ -760,7 +768,7 @@ const ADDONS = [
     ]
   },
   {
-    id:"relationship", glyph:"♾", title:"Relationship Alignment Deep-Dive",
+    id:"relationship", glyph:"♾", icon:`${ICON_BASE}/synthesis-sections/relationship-alignment.png`, title:"Relationship Alignment Deep-Dive",
     desc:"Translates your Connection Currency into practical guidance for your closest relationship.",
     onDashboard:true,
     deck:"The exchange rate of your closest bond.",
@@ -772,25 +780,37 @@ const ADDONS = [
     ]
   },
   {
-    id:"parenting", glyph:"❂", title:"Parenting Style Map",
+    id:"parenting", glyph:"❂", icon:`${ICON_BASE}/synthesis-sections/parenting-style.png`, title:"Parenting Style Map",
     desc:"Shows how your wiring shapes the way you parent — and how to reach each child's wiring.",
     onDashboard:true,
     deck:"How a Caretaker raises — and what each child needs.", archetype:null, prose:[]
   },
   {
-    id:"leadership", glyph:"♕", title:"Leadership Profile Deep-Dive",
+    id:"leadership", glyph:"♕", icon:`${ICON_BASE}/synthesis-sections/leadership-profile.png`, title:"Leadership Profile Deep-Dive",
     desc:"Decodes how you lead, how you derail, and the conditions where you do your best work.",
     onDashboard:true,
     deck:"The shape of your authority.", archetype:null, prose:[]
   },
   {
-    id:"ministry", glyph:"✠", title:"Ministry Profile Deep-Dive",
+    id:"ministry", glyph:"✠", icon:`${ICON_BASE}/synthesis-sections/ministry-profile.png`, title:"Ministry Profile Deep-Dive",
     desc:"Aligns your spiritual gifts with the service roles where you will have the deepest impact.",
     onDashboard:true,
     deck:"Where your gifts are meant to be spent.", archetype:null, prose:[]
   },
   {
-    id:"plan30", glyph:"➤", title:"30-Day Action Plan",
+    id:"stress", glyph:"⚡", icon:`${ICON_BASE}/synthesis-sections/stress-response-map.png`, title:"Stress Response Map",
+    desc:"Maps who you become under pressure — your early warning signs and your fastest route back.",
+    onDashboard:true,
+    deck:"Who you become under pressure.", archetype:null, prose:[]
+  },
+  {
+    id:"strategic", glyph:"✪", icon:`${ICON_BASE}/synthesis-sections/strategic-recommendations.png`, title:"Strategic Recommendations",
+    desc:"The consulting summary: your highest-leverage moves, ranked and sequenced.",
+    onDashboard:true,
+    deck:"Your highest-leverage moves, ranked.", archetype:null, prose:[]
+  },
+  {
+    id:"plan30", glyph:"➤", icon:`${ICON_BASE}/synthesis-sections/thirty-day-plan.png`, title:"30-Day Action Plan",
     desc:"A guided month of small moves that bring your daily life into line with your Blueprint.",
     onDashboard:true,
     deck:"One month. Small moves. Real alignment.", archetype:null, prose:[]
@@ -801,49 +821,26 @@ const ADDONS = [
    entitlements field on the GHL contact record. */
 const owned = new Set(["career","relationship"]);
 
+/* each entry's `open` describes what a click does:
+   {view:'viewer', section?} navigates; {alert} shows a placeholder message */
 const HISTORY = [
-  {title:"Took The Blueprint", date:"June 8, 2026", detail:"Completed the full Blueprint assessment (all seven lenses). Report generated and delivered to robert.t.franklin1@gmail.com."},
-  {title:"Unlocked Career Alignment Deep-Dive", date:"June 9, 2026", detail:"Purchased the Career Alignment Deep-Dive add-on for $49."},
-  {title:"Unlocked Relationship Alignment Deep-Dive", date:"June 9, 2026", detail:"Purchased the Relationship Alignment Deep-Dive add-on for $49."},
-  {title:"Received Couples Connection Map", date:"June 9, 2026", detail:"Couples Connection Map delivered as part of the Relationship Alignment Deep-Dive."}
+  {title:"Took The Blueprint", date:"June 8, 2026", open:{view:"viewer", section:"behavior"}},
+  {title:"Unlocked Career Alignment Deep-Dive", date:"June 9, 2026", open:{view:"viewer", section:"career"}},
+  {title:"Unlocked Relationship Alignment Deep-Dive", date:"June 9, 2026", open:{view:"viewer", section:"relationship"}},
+  {title:"Received Couples Connection Map", date:"June 9, 2026", open:{alert:"Your Couples Connection Map opens here in production"}}
 ];
 
 /* ---------------- logo ---------------- */
-function logoSVG(size){
-  return `
-  <svg width="${size}" height="${size}" viewBox="0 0 120 132" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Spiritual Romeo">
-    <!-- crown -->
-    <path d="M46 16 L50 5 L56 13 L60 2 L64 13 L70 5 L74 16 Z" fill="#d4a957" opacity="0.95"/>
-    <rect x="46" y="17.5" width="28" height="2.5" rx="1.2" fill="#d4a957"/>
-    <!-- outer ring -->
-    <circle cx="60" cy="74" r="42" stroke="#d4a957" stroke-width="1.6"/>
-    <circle cx="60" cy="74" r="37" stroke="#d4a957" stroke-width="0.6" opacity="0.55"/>
-    <!-- SR monogram -->
-    <text x="60" y="86" text-anchor="middle" font-family="Playfair Display, Georgia, serif" font-size="33" font-weight="600" fill="#d4a957" letter-spacing="1">SR</text>
-    <!-- laurel left -->
-    <g stroke="#d4a957" stroke-width="1.1" fill="#d4a957">
-      <path d="M22 96 Q14 78 20 58" fill="none"/>
-      <ellipse cx="17" cy="62" rx="5.5" ry="2.1" transform="rotate(-62 17 62)"/>
-      <ellipse cx="15" cy="73" rx="5.5" ry="2.1" transform="rotate(-80 15 73)"/>
-      <ellipse cx="16" cy="84" rx="5.5" ry="2.1" transform="rotate(-95 16 84)"/>
-      <ellipse cx="20" cy="94" rx="5.5" ry="2.1" transform="rotate(-115 20 94)"/>
-      <ellipse cx="27" cy="103" rx="5.5" ry="2.1" transform="rotate(-135 27 103)"/>
-    </g>
-    <!-- laurel right -->
-    <g stroke="#d4a957" stroke-width="1.1" fill="#d4a957">
-      <path d="M98 96 Q106 78 100 58" fill="none"/>
-      <ellipse cx="103" cy="62" rx="5.5" ry="2.1" transform="rotate(62 103 62)"/>
-      <ellipse cx="105" cy="73" rx="5.5" ry="2.1" transform="rotate(80 105 73)"/>
-      <ellipse cx="104" cy="84" rx="5.5" ry="2.1" transform="rotate(95 104 84)"/>
-      <ellipse cx="100" cy="94" rx="5.5" ry="2.1" transform="rotate(115 100 94)"/>
-      <ellipse cx="93" cy="103" rx="5.5" ry="2.1" transform="rotate(135 93 103)"/>
-    </g>
-    <!-- base tie -->
-    <path d="M52 124 Q60 129 68 124" stroke="#d4a957" stroke-width="1.4" fill="none"/>
-  </svg>`;
-}
+const LOGO_URL = "https://dennisnickens.com/sr-logo-transparent.png";
+const LOGO_URL_ALT = "https://dennisnickens-site-psi.vercel.app/sr-logo-transparent.png";
 document.querySelectorAll(".sr-logo").forEach(el=>{
-  el.innerHTML = logoSVG(parseInt(el.dataset.logo||"48",10));
+  const size = parseInt(el.dataset.logo||"48",10);
+  const img = document.createElement("img");
+  img.src = LOGO_URL;
+  img.alt = "Spiritual Romeo";
+  img.style.height = size + "px";
+  img.onerror = ()=>{ img.onerror = null; img.src = LOGO_URL_ALT; };
+  el.replaceChildren(img);
 });
 
 /* ---------------- screen / view switching ---------------- */
@@ -915,14 +912,20 @@ function renderAddonGrid(){
   ADDONS.filter(a=>a.onDashboard).forEach(a=>{
     const card = document.createElement("div");
     card.className = "addon-card";
+    card.style.cursor = "pointer";
     const foot = owned.has(a.id)
       ? `<span class="badge-owned">✦ Owned</span>`
       : `<button class="btn-outline" data-buy="${a.id}">Buy for $49</button>`;
     card.innerHTML = `
-      <div class="addon-glyph">${a.glyph}</div>
+      <img class="addon-icon" src="${a.icon}" alt="">
       <h4>${a.title}</h4>
       <p>${a.desc}</p>
       <div class="addon-foot">${foot}</div>`;
+    card.addEventListener("click", e=>{
+      if(e.target.closest("[data-buy]")) return; // Buy button opens the modal directly
+      showView("viewer");
+      selectSection(a.id); // owned → content, locked → paywall
+    });
     grid.appendChild(card);
   });
   grid.querySelectorAll("[data-buy]").forEach(btn=>{
@@ -942,7 +945,9 @@ function renderHistory(){
         <span class="h-date">${h.date}</span><span class="h-arrow">→</span>
       </span>`;
     row.addEventListener("click", ()=>{
-      alert(`${h.title}\n${h.date}\n\n${h.detail}`);
+      if(h.open.alert){ alert(h.open.alert); return; }
+      showView("viewer");
+      selectSection(h.open.section || currentSection || "behavior");
     });
     list.appendChild(row);
   });
@@ -996,7 +1001,7 @@ function renderSidebar(){
     if(locked){
       trailing = `<span class="ni-lock" title="Locked">🔒</span><button class="ni-buy" data-buy="${sec.id}">Buy&nbsp;for&nbsp;$49</button>`;
     }
-    b.innerHTML = `<span class="ni-glyph">${sec.glyph}</span><span class="ni-label">${sec.title}</span>${trailing}`;
+    b.innerHTML = `<img class="ni-icon" src="${sec.icon}" alt=""><span class="ni-label">${sec.title}</span>${trailing}`;
     b.addEventListener("click", e=>{
       if(e.target.closest(".ni-buy")){ openPayModal(sec.id); return; }
       selectSection(sec.id);
@@ -1043,7 +1048,8 @@ function articleHTML(sec){
   ]).map(p=>`<p>${p}</p>`).join("");
   return `
     <article class="section-article">
-      <div class="medallion">${sec.glyph}</div>
+      <img class="medallion-img" src="${sec.icon}" alt="">
+
       <span class="kicker smallcaps">The Blueprint · ${customer.firstName} ${customer.lastName}</span>
       <h2>${sec.title}</h2>
       <p class="deck">${sec.deck}</p>
