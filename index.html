@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Spiritual Romeo — Client Portal</title>
+<title>Spiritual Romeo Client Portal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -113,6 +113,12 @@ body{
 .medallion-img{
   display:block;width:120px;height:120px;object-fit:contain;margin:0 auto 1.75rem;
   filter:drop-shadow(0 0 28px rgba(212,169,87,0.18));
+}
+.sub-arch{font-weight:600;color:var(--gold-bright);white-space:nowrap;}
+.sub-arch img{
+  height:38px;width:38px;object-fit:contain;display:inline-block;
+  vertical-align:middle;margin:-4px 0.4rem 0 0.1rem;
+  filter:drop-shadow(0 0 8px rgba(212,169,87,0.22));
 }
 
 /* ============ LOGIN ============ */
@@ -365,7 +371,11 @@ body{
   font-size:0.74rem;color:var(--gold);text-align:center;margin-bottom:1.6rem;font-weight:600;
 }
 .score-row{display:flex;align-items:center;gap:1.1rem;margin-bottom:1rem;}
-.score-row .sr-label{flex:0 0 110px;font-size:0.8rem;color:var(--cream-dim);text-align:right;letter-spacing:0.03em;}
+.score-row .sr-label{
+  flex:0 0 150px;font-size:0.8rem;color:var(--cream-dim);letter-spacing:0.03em;
+  display:flex;align-items:center;justify-content:flex-end;gap:0.5rem;
+}
+.score-row .sr-label img{width:26px;height:26px;object-fit:contain;}
 .score-row .sr-track{flex:1;height:7px;border-radius:4px;background:rgba(255,255,255,0.06);overflow:hidden;}
 .score-row .sr-fill{
   display:block;height:100%;border-radius:4px;width:0;
@@ -514,7 +524,8 @@ body{
   #viewer-sidebar .sidebar-inner{position:static;max-height:100vh;height:100%;padding-top:2.5rem;}
   #viewer-content{padding:2.5rem 1.4rem 6rem;}
   .section-article h2{font-size:1.85rem;}
-  .score-row .sr-label{flex-basis:88px;font-size:0.72rem;}
+  .score-row .sr-label{flex-basis:118px;font-size:0.72rem;}
+  .sub-arch img{height:30px;width:30px;}
   .history-row{padding:1rem 1.1rem;flex-wrap:wrap;gap:0.2rem;}
   .profile-card{padding:2.25rem 1.5rem;}
 }
@@ -669,27 +680,61 @@ const customer = {
 
 const ICON_BASE = "https://dennisnickens.com/assessment/icons";
 
+/* sub-archetype icon set; prose references an archetype as [[Name]] and
+   articleHTML swaps the token for the icon plus the bolded name */
+const SUB_ICONS = {
+  Commander:`${ICON_BASE}/core-subtypes/commander.png`,
+  Organizer:`${ICON_BASE}/core-subtypes/organizer.png`,
+  Relator:`${ICON_BASE}/core-subtypes/relator.png`,
+  Energizer:`${ICON_BASE}/core-subtypes/energizer.png`,
+  Steward:`${ICON_BASE}/drive-subtypes/steward.png`,
+  Scholar:`${ICON_BASE}/drive-subtypes/scholar.png`,
+  Sparker:`${ICON_BASE}/drive-subtypes/sparker.png`,
+  Crafter:`${ICON_BASE}/drive-subtypes/crafter.png`,
+  Presence:`${ICON_BASE}/currency-subtypes/presence.png`,
+  Spoken:`${ICON_BASE}/currency-subtypes/spoken.png`,
+  Tokens:`${ICON_BASE}/currency-subtypes/tokens.png`,
+  Contact:`${ICON_BASE}/currency-subtypes/contact.png`,
+  Action:`${ICON_BASE}/currency-subtypes/action.png`,
+  Sight:`${ICON_BASE}/channel-subtypes/sight.png`,
+  Sound:`${ICON_BASE}/channel-subtypes/sound.png`,
+  Word:`${ICON_BASE}/channel-subtypes/word.png`,
+  Touch:`${ICON_BASE}/channel-subtypes/touch.png`,
+  Faith:`${ICON_BASE}/gifts-subtypes/faith.png`,
+  Mercy:`${ICON_BASE}/gifts-subtypes/mercy.png`,
+  Encouragement:`${ICON_BASE}/gifts-subtypes/encouragement.png`,
+  Giving:`${ICON_BASE}/gifts-subtypes/giving.png`,
+  Leadership:`${ICON_BASE}/gifts-subtypes/leadership.png`,
+  Teaching:`${ICON_BASE}/gifts-subtypes/teaching.png`,
+};
+function subArch(name){
+  return `<span class="sub-arch"><img src="${SUB_ICONS[name]}" alt="">${name}</span>`;
+}
+function renderTokens(text){
+  return text.replace(/\[\[(\w+)\]\]/g, (m,name)=> SUB_ICONS[name] ? subArch(name) : name);
+}
+
 const LENSES = [
   {
     id:"behavior", glyph:"◈", icon:`${ICON_BASE}/pillars/01-core.png`, title:"Behavior Profile",
     deck:"How you instinctively move through the world.",
     archetype:"The Caretaker",
     prose:[
-      "You lead with care. Before you act, you read the room — who is carrying weight, who is overlooked, what needs tending that no one else has noticed. Where others see tasks, you see people, and your first instinct in nearly every situation is to stabilize, protect, and provide. This is not softness; it is a deliberate form of strength that organizations and families quietly depend on.",
-      "Caretakers operate on a long time horizon. You rarely chase the quick win, because you are measuring outcomes in trust built, relationships preserved, and people developed. In practice this means you will absorb short-term cost — extra hours, deferred recognition, uncomfortable conversations — to protect long-term health. The people around you experience this as reliability. You experience it as simply doing what needs to be done.",
-      "The shadow side of your wiring is over-extension. Because you instinctively move toward need, you can fill every gap you see until there is nothing left in reserve. Your Blueprint flags this directly: your effectiveness is highest when you treat your own capacity as an asset to be managed, not an infinite resource to be spent. The score profile below shows how your behavioral energy distributes across the four drive patterns."
+      "You lead with care. Before you act, you read the room. Who is carrying weight, who is overlooked, what needs tending that no one else has noticed. Where others see tasks, you see people, and your first instinct in nearly every situation is to stabilize, protect, and provide. This is not softness. It is a deliberate form of strength that organizations and families quietly depend on.",
+      "Your CORE profile leads with [[Relator]], the pattern that builds trust first and moves second. Underneath it runs a strong [[Organizer]] current, which gives your care its structure: you do not just comfort people, you build the routines that keep them steady. Your [[Commander]] and [[Energizer]] scores sit lower, which means you spend authority and enthusiasm sparingly, and people notice when you do.",
+      "The shadow side of your wiring is overextension. Because you instinctively move toward need, you can fill every gap you see until there is nothing left in reserve. Your Blueprint flags this directly: your effectiveness is highest when you treat your own capacity as an asset to be managed, not an infinite resource to be spent. The breakdown below shows how your behavioral energy distributes across the four CORE patterns."
     ],
-    scores:{title:"Your Drive Pattern Breakdown", rows:[
+    scores:{title:"Your CORE Pattern Breakdown", rows:[
       ["Commander",14],["Organizer",22],["Relator",47],["Energizer",17]
     ]}
   },
   {
     id:"personality", glyph:"✦", icon:`${ICON_BASE}/pillars/02-lens.png`, title:"Personality Code",
     deck:"The architecture beneath your outward style.",
-    archetype:"The Architect-Harmonizer",
+    archetype:"The Architect Harmonizer",
     prose:[
-      "Underneath your warm exterior is a structural thinker. You do not just want people to be at peace — you want the systems around them to make peace sustainable. This pairing is rarer than it sounds: most harmonizers smooth conflict in the moment, while most architects design without reference to the human cost. You do both, and that dual fluency is the core of your Personality Code.",
-      "In decision-making, you run a two-pass process. The first pass is analytical — you map the options, the constraints, and the second-order consequences with unusual speed. The second pass is relational — you ask who will be affected, who needs to be brought along, and what the decision will communicate. When you are given time to run both passes, your judgment is consistently excellent. When you are forced to skip the second pass, you feel the decision as unfinished, even when it is technically correct.",
+      "Underneath your warm exterior is a structural thinker. You do not just want people to be at peace. You want the systems around them to make peace sustainable. This pairing is rarer than it sounds: most harmonizers smooth conflict in the moment, while most architects design without reference to the human cost. You do both, and that dual fluency is the core of your Personality Code.",
+      "In decision making, you run a two pass process. The first pass is analytical: you map the options, the constraints, and the downstream consequences with unusual speed. The second pass is relational: you ask who will be affected, who needs to be brought along, and what the decision will communicate. When you are given time to run both passes, your judgment is consistently excellent. When you are forced to skip the second pass, you feel the decision as unfinished, even when it is technically correct.",
       "Your growth edge is decisiveness under social cost. Because you can see every stakeholder's position, you can delay choices that will disappoint someone, hoping a better option will surface. Your Blueprint recommends a simple discipline: name the decision deadline out loud, to another person, at the moment you spot yourself holding two passes open. Externalizing the deadline converts your harmonizer instinct from a brake into an ally."
     ]
   },
@@ -698,9 +743,9 @@ const LENSES = [
     deck:"How you convert intention into motion.",
     archetype:"The Steady Finisher",
     prose:[
-      "You are built for the second half of the race. Many people generate ideas and early momentum; far fewer carry work through the unglamorous middle and across the finish line. Your action style is paced, consistent, and quietly relentless. You distrust bursts and trust routines — and your track record proves the instinct right.",
-      "This means your highest-leverage environments are ones with clear ownership and room to establish rhythm. You degrade in environments that reward visible urgency over actual completion, because you will not perform busyness, and shallow cultures sometimes misread your steadiness as a lack of fire. It is not. It is fire with a governor on it, which is exactly what long projects require.",
-      "Watch one pattern closely: you finish other people's priorities at the same standard as your own. That is honorable, and it is also how Steady Finishers end up running on agendas they never chose. The 30-Day Action Plan add-on builds a filter for this — a weekly review that separates commitments you made from commitments that drifted onto you."
+      "You are built for the second half of the race. Many people generate ideas and early momentum. Far fewer carry work through the unglamorous middle and across the finish line. Your action style is paced, consistent, and quietly relentless. You distrust bursts and trust routines, and your track record proves the instinct right.",
+      "Your DRIVE profile leads with [[Steward]], the pattern that protects what has been entrusted to it and finishes what it starts. Behind it sits a strong [[Crafter]] current: you want the work done right, not just done. The [[Sparker]] pattern ranks lowest in your profile, which is why cultures that reward visible urgency sometimes misread your steadiness as a lack of fire. It is not. It is fire with a governor on it, which is exactly what long projects require.",
+      "Watch one pattern closely: you finish other people's priorities at the same standard as your own. That is honorable, and it is also how Stewards end up running on agendas they never chose. The 30 Day Action Plan add-on builds a filter for this, a weekly review that separates commitments you made from commitments that drifted onto you."
     ]
   },
   {
@@ -708,22 +753,22 @@ const LENSES = [
     deck:"The language in which you give and receive care.",
     archetype:"Quality Presence",
     prose:[
-      "Your primary connection currency is presence. You feel most loved not through words or gestures, but when someone gives you their full, unhurried attention — and you pay love out the same way. When you sit with someone, you are entirely there, and people consistently describe conversations with you as feeling 'different,' even when they cannot say why.",
-      "The risk in your profile is asymmetry. Because presence is expensive and modern life is fragmented, the people closest to you may be paying you in currencies you do not register — quick texts, small favors, words of affirmation — while you quietly run a deficit. The reverse is also true: your steady presence can go unnoticed by someone whose currency is verbal. Neither side is failing to love; you are trading in different denominations.",
+      "Your primary connection currency is presence. You feel most loved when someone gives you their full, unhurried attention, and you pay love out the same way. When you sit with someone, you are entirely there. People consistently describe conversations with you as feeling different, even when they cannot say why.",
+      "Your profile leads with [[Presence]] by a wide margin, with [[Action]] second: you register practical help as real affection, whether you are giving it or receiving it. [[Spoken]] ranks third, which explains a quiet mismatch you may have lived with for years. The people closest to you may be paying you in words while your wiring is waiting for time. Neither side is failing to love. You are trading in different denominations.",
       "Your Blueprint recommends one explicit conversation per key relationship: name your currency, ask for theirs, and agree on the exchange rate. The breakdown below shows how the five currencies rank in your wiring."
     ],
     scores:{title:"Your Currency Breakdown", rows:[
-      ["Presence",38],["Service",24],["Words",18],["Gifts",12],["Touch",8]
+      ["Presence",38],["Action",24],["Spoken",18],["Tokens",12],["Contact",8]
     ]}
   },
   {
     id:"learning", glyph:"✺", icon:`${ICON_BASE}/pillars/05-channel.png`, title:"Learning Channel",
     deck:"How new information actually gets into you.",
-    archetype:"Visual-Reflective",
+    archetype:"The Sight Learner",
     prose:[
-      "You learn through the eye and the pause. New material lands for you when you can see it — diagrams, written pages, watching a thing done — and it sticks when you are given silence afterward to integrate. You are not slow; you are deep. The same lecture that a verbal processor masters in the room, you master that evening, more thoroughly, on the second pass you take alone.",
-      "This has a direct implication for how you should consume this Blueprint: read it in sittings, not in one push, and keep something to write with. Your retention roughly doubles when you translate what you read into your own sketches and margin notes, because translation is where your channel does its real work.",
-      "In professional settings, protect your integration time without apologizing for it. 'Let me look at this and come back tomorrow with a view' is not a delay — for your wiring, it is the actual mechanism of understanding. Teams that learn to give you the overnight loop get dramatically better output from you than teams that demand reactions live in the meeting."
+      "You learn through the eye and the pause. New material lands for you when you can see it: diagrams, written pages, watching a thing done. It sticks when you are given silence afterward to integrate. You are not slow. You are deep. The same lecture that a verbal processor masters in the room, you master that evening, more thoroughly, on the second pass you take alone.",
+      "Your CHANNEL profile leads with [[Sight]], followed closely by [[Word]]: you retain what you read better than what you hear. [[Sound]] ranks lowest in your wiring, which is why long unstructured meetings drain you and leave surprisingly little behind. This has a direct implication for how you should consume this Blueprint. Read it in sittings, not in one push, and keep something to write with. Your retention roughly doubles when you translate what you read into your own sketches and margin notes.",
+      "In professional settings, protect your integration time without apologizing for it. Saying you will look at something tonight and come back tomorrow with a view is not a delay. For your wiring, it is the actual mechanism of understanding. Teams that learn to give you the overnight loop get dramatically better output from you than teams that demand reactions live in the meeting."
     ]
   },
   {
@@ -731,19 +776,19 @@ const LENSES = [
     deck:"The posture of your inner life.",
     archetype:"The Intercessor",
     prose:[
-      "Your spiritual life runs toward others. Where some are wired for study and others for celebration, your native posture is standing in the gap — holding people, situations, and outcomes before God with a persistence that does not depend on visible results. You may have done this for years without naming it; it is simply how your interior life works.",
-      "Intercessors carry a particular burden: you feel the weight of what you carry, and because the work is invisible, it is rarely acknowledged or shared. Your Blueprint identifies this as your primary point of spiritual fatigue. The discipline that protects you is rhythm — fixed times that begin and end, rather than an always-on vigilance that never sets the weight down.",
-      "Your wiring also explains a pattern you have likely noticed: people confide in you quickly, often within minutes of meeting you. They are responding to something real. The Ministry Profile add-on maps where this wiring is best deployed — and just as importantly, the roles that look spiritual but would quietly starve it."
+      "Your spiritual life runs toward others. Where some are wired for study and others for celebration, your native posture is standing in the gap: holding people, situations, and outcomes before God with a persistence that does not depend on visible results. You may have done this for years without naming it. It is simply how your interior life works.",
+      "Intercessors carry a particular burden. You feel the weight of what you carry, and because the work is invisible, it is rarely acknowledged or shared. Your Blueprint identifies this as your primary point of spiritual fatigue. The discipline that protects you is rhythm: fixed times that begin and end, rather than a constant vigilance that never sets the weight down.",
+      "Your wiring also explains a pattern you have likely noticed: people confide in you quickly, often within minutes of meeting you. They are responding to something real. The Ministry Profile add-on maps where this wiring is best deployed, and just as importantly, the roles that look spiritual but would quietly starve it."
     ]
   },
   {
     id:"spiritual-gifts", glyph:"✣", icon:`${ICON_BASE}/pillars/07-gifts.png`, title:"Spiritual Gifts",
     deck:"What you have been given to give.",
-    archetype:"Discernment · Encouragement · Teaching",
+    archetype:"Encouragement · Teaching · Mercy",
     prose:[
-      "Three gifts lead your profile, and they compound. Discernment lets you read what is actually happening beneath what is being said. Encouragement lets you speak to it in a way people can receive. Teaching lets you turn the moment into something the person can carry forward and use without you. Together they make you a builder of people — not in the abstract, but one conversation at a time.",
-      "The ordering matters. Discernment is your first gift, which means your perceptions usually arrive before your words are ready. Trust the perception; take your time with the delivery. When you have rushed in the past, it was almost never the insight that misfired — it was the timing.",
-      "A gift profile like yours is most at risk of being spent entirely in private. Because all three gifts operate one-on-one, you can have an enormous cumulative impact that no structure ever sees, names, or develops. The leadership and ministry add-ons in your Blueprint address exactly this: how to bring a personal gifting into roles with shape and reach, without losing the intimacy that makes it work."
+      "Three gifts lead your profile, and they compound. [[Encouragement]] lets you speak to what is happening in a person in a way they can receive. [[Teaching]] lets you turn the moment into something they can carry forward and use without you. [[Mercy]] sits underneath the other two: you feel what people feel, which is why your words land where generic advice bounces off. Together they make you a builder of people, one conversation at a time.",
+      "The ordering matters. Mercy is your perceiving gift, which means your read on a person usually arrives before your words are ready. Trust the read. Take your time with the delivery. When you have rushed in the past, it was almost never the insight that misfired. It was the timing.",
+      "A gift profile like yours is most at risk of being spent entirely in private. Because all three gifts operate one on one, you can have an enormous cumulative impact that no structure ever sees, names, or develops. The leadership and ministry add-ons in your Blueprint address exactly this: how to bring a personal gifting into roles with shape and reach, without losing the intimacy that makes it work."
     ]
   }
 ];
@@ -751,66 +796,66 @@ const LENSES = [
 const ADDONS = [
   {
     id:"misalignment", glyph:"⚯", icon:`${ICON_BASE}/synthesis-sections/misalignment-map.png`, title:"Misalignment Map",
-    desc:"Pinpoints where your daily life is running against your wiring — and what it is costing you.",
+    desc:"Pinpoints where your daily life is running against your wiring, and what it is costing you.",
     onDashboard:false,
     deck:"Where your life and your wiring disagree.", archetype:null, prose:[]
   },
   {
-    id:"career", glyph:"◬", icon:`${ICON_BASE}/synthesis-sections/career-alignment.png`, title:"Career Alignment Deep-Dive",
-    desc:"Maps your wiring against your current role and shows where your work fits you — and where it fights you.",
+    id:"career", glyph:"◬", icon:`${ICON_BASE}/synthesis-sections/career-alignment.png`, title:"Career Alignment Deep Dive",
+    desc:"Maps your wiring against your current role and shows where your work fits you, and where it fights you.",
     onDashboard:true,
     deck:"Your wiring, measured against your work.",
     archetype:"Alignment Score: 71 / 100",
     prose:[
-      "Your current role sits in moderate alignment with your Blueprint — strong on the dimensions that matter most to your wiring, with two specific friction points that explain most of your work-related fatigue. The strength first: your role rewards completion over theater, which suits your Steady Finisher action style almost perfectly. You are evaluated on what ships, and that is the scoreboard your wiring wants.",
-      "The first friction point is meeting density. Your Visual-Reflective learning channel and two-pass decision style both require integration time, and your current calendar provides almost none. The audit in this section estimates you are making roughly a third of your decisions on a single pass — technically adequate, but well below the quality your wiring produces when it has the overnight loop. Reclaiming two protected half-days per week would likely raise your decision quality more than any skill investment available to you.",
-      "The second friction point is invisibility of care work. A significant share of your actual contribution — stabilizing colleagues, absorbing ambiguity, preventing problems — is Caretaker labor that your organization consumes but does not measure. The recommendation is not to stop; it is to convert. This section closes with three concrete ways to translate care work into named, scoped responsibilities that appear on the record you are evaluated against."
+      "Your current role sits in moderate alignment with your Blueprint: strong on the dimensions that matter most to your wiring, with two specific friction points that explain most of your work fatigue. The strength first: your role rewards completion over theater, which suits your Steady Finisher action style almost perfectly. You are evaluated on what ships, and that is the scoreboard your wiring wants.",
+      "The first friction point is meeting density. Your [[Sight]] leaning learning channel and two pass decision style both require integration time, and your current calendar provides almost none. The audit in this section estimates you are making roughly a third of your decisions on a single pass. Technically adequate, but well below the quality your wiring produces when it has the overnight loop. Reclaiming two protected half days per week would likely raise your decision quality more than any skill investment available to you.",
+      "The second friction point is invisibility of care work. A significant share of your actual contribution (stabilizing colleagues, absorbing ambiguity, preventing problems) is Caretaker labor that your organization consumes but does not measure. The recommendation is not to stop. It is to convert. This section closes with three concrete ways to translate care work into named, scoped responsibilities that appear on the record you are evaluated against."
     ]
   },
   {
-    id:"relationship", glyph:"♾", icon:`${ICON_BASE}/synthesis-sections/relationship-alignment.png`, title:"Relationship Alignment Deep-Dive",
+    id:"relationship", glyph:"♾", icon:`${ICON_BASE}/synthesis-sections/relationship-alignment.png`, title:"Relationship Alignment Deep Dive",
     desc:"Translates your Connection Currency into practical guidance for your closest relationship.",
     onDashboard:true,
     deck:"The exchange rate of your closest bond.",
     archetype:"Primary Pattern: The Presence Gap",
     prose:[
-      "This deep-dive applies your Connection Currency profile to the architecture of a primary relationship. Your dominant currency — Quality Presence — is both your greatest relational asset and the source of your most predictable conflict pattern, which this section names the Presence Gap: the recurring experience of being physically together while one partner's attention is elsewhere, registered by your wiring as a withdrawal even when no slight was intended.",
-      "Because you pay love in presence, you also keep accounts in it. The analysis here walks through what happens in your wiring during a stretch of fragmented attention: the deficit accumulates silently, without complaint, until it surfaces sideways — usually as withdrawal of your own. Your partner, trading in a different currency, often has no idea a debt was accruing. Neither of you is wrong. You are settling in different denominations.",
-      "The protocol this section recommends is deliberately small: one exchange-rate conversation, one recurring block of protected, device-free time, and one named signal either partner can use to flag the gap before it converts to distance. Couples with your profile rarely need more intervention than this — they need the pattern named, and a shared language for catching it early."
+      "This deep dive applies your Connection Currency profile to the architecture of a primary relationship. Your dominant currency, [[Presence]], is both your greatest relational asset and the source of your most predictable conflict pattern. This section names it the Presence Gap: the recurring experience of being physically together while one partner's attention is elsewhere, registered by your wiring as a withdrawal even when no slight was intended.",
+      "Because you pay love in presence, you also keep accounts in it. The analysis here walks through what happens in your wiring during a stretch of fragmented attention. The deficit accumulates silently, without complaint, until it surfaces sideways, usually as a withdrawal of your own. Your partner, trading in a different currency, often has no idea a debt was accruing. Neither of you is wrong. You are settling in different denominations.",
+      "The protocol this section recommends is deliberately small: one exchange rate conversation, one recurring block of protected time with devices away, and one named signal either partner can use to flag the gap before it converts to distance. Couples with your profile rarely need more intervention than this. They need the pattern named, and a shared language for catching it early."
     ]
   },
   {
     id:"parenting", glyph:"❂", icon:`${ICON_BASE}/synthesis-sections/parenting-style.png`, title:"Parenting Style Map",
-    desc:"Shows how your wiring shapes the way you parent — and how to reach each child's wiring.",
+    desc:"Shows how your wiring shapes the way you parent, and how to reach each child's wiring.",
     onDashboard:true,
-    deck:"How a Caretaker raises — and what each child needs.", archetype:null, prose:[]
+    deck:"How a Caretaker raises, and what each child needs.", archetype:null, prose:[]
   },
   {
-    id:"leadership", glyph:"♕", icon:`${ICON_BASE}/synthesis-sections/leadership-profile.png`, title:"Leadership Profile Deep-Dive",
+    id:"leadership", glyph:"♕", icon:`${ICON_BASE}/synthesis-sections/leadership-profile.png`, title:"Leadership Profile Deep Dive",
     desc:"Decodes how you lead, how you derail, and the conditions where you do your best work.",
     onDashboard:true,
     deck:"The shape of your authority.", archetype:null, prose:[]
   },
   {
-    id:"ministry", glyph:"✠", icon:`${ICON_BASE}/synthesis-sections/ministry-profile.png`, title:"Ministry Profile Deep-Dive",
+    id:"ministry", glyph:"✠", icon:`${ICON_BASE}/synthesis-sections/ministry-profile.png`, title:"Ministry Profile Deep Dive",
     desc:"Aligns your spiritual gifts with the service roles where you will have the deepest impact.",
     onDashboard:true,
     deck:"Where your gifts are meant to be spent.", archetype:null, prose:[]
   },
   {
     id:"stress", glyph:"⚡", icon:`${ICON_BASE}/synthesis-sections/stress-response-map.png`, title:"Stress Response Map",
-    desc:"Maps who you become under pressure — your early warning signs and your fastest route back.",
+    desc:"Maps who you become under pressure, your early warning signs, and your fastest route back.",
     onDashboard:true,
     deck:"Who you become under pressure.", archetype:null, prose:[]
   },
   {
     id:"strategic", glyph:"✪", icon:`${ICON_BASE}/synthesis-sections/strategic-recommendations.png`, title:"Strategic Recommendations",
-    desc:"The consulting summary: your highest-leverage moves, ranked and sequenced.",
+    desc:"The consulting summary: your highest leverage moves, ranked and sequenced.",
     onDashboard:true,
-    deck:"Your highest-leverage moves, ranked.", archetype:null, prose:[]
+    deck:"Your highest leverage moves, ranked.", archetype:null, prose:[]
   },
   {
-    id:"plan30", glyph:"➤", icon:`${ICON_BASE}/synthesis-sections/thirty-day-plan.png`, title:"30-Day Action Plan",
+    id:"plan30", glyph:"➤", icon:`${ICON_BASE}/synthesis-sections/thirty-day-plan.png`, title:"30 Day Action Plan",
     desc:"A guided month of small moves that bring your daily life into line with your Blueprint.",
     onDashboard:true,
     deck:"One month. Small moves. Real alignment.", archetype:null, prose:[]
@@ -825,8 +870,8 @@ const owned = new Set(["career","relationship"]);
    {view:'viewer', section?} navigates; {alert} shows a placeholder message */
 const HISTORY = [
   {title:"Took The Blueprint", date:"June 8, 2026", open:{view:"viewer", section:"behavior"}},
-  {title:"Unlocked Career Alignment Deep-Dive", date:"June 9, 2026", open:{view:"viewer", section:"career"}},
-  {title:"Unlocked Relationship Alignment Deep-Dive", date:"June 9, 2026", open:{view:"viewer", section:"relationship"}},
+  {title:"Unlocked Career Alignment Deep Dive", date:"June 9, 2026", open:{view:"viewer", section:"career"}},
+  {title:"Unlocked Relationship Alignment Deep Dive", date:"June 9, 2026", open:{view:"viewer", section:"relationship"}},
   {title:"Received Couples Connection Map", date:"June 9, 2026", open:{alert:"Your Couples Connection Map opens here in production"}}
 ];
 
@@ -1011,7 +1056,7 @@ function renderSidebar(){
 
   nav.appendChild(groupLabel("Your Seven Lenses"));
   LENSES.forEach(s=>nav.appendChild(makeItem(s,false)));
-  nav.appendChild(groupLabel("Deep-Dive Add-Ons"));
+  nav.appendChild(groupLabel("Deep Dive Add-Ons"));
   ADDONS.forEach(s=>nav.appendChild(makeItem(s, !owned.has(s.id))));
 
   const div = document.createElement("div");
@@ -1031,7 +1076,7 @@ function articleHTML(sec){
     scores = `<div class="score-block"><div class="sb-title">${sec.scores.title}</div>` +
       sec.scores.rows.map(([label,pct])=>`
         <div class="score-row">
-          <span class="sr-label">${label}</span>
+          <span class="sr-label">${SUB_ICONS[label] ? `<img src="${SUB_ICONS[label]}" alt="">` : ""}${label}</span>
           <span class="sr-track"><span class="sr-fill" data-pct="${pct}"></span></span>
           <span class="sr-pct">${pct}%</span>
         </div>`).join("") + `</div>`;
@@ -1042,10 +1087,10 @@ function articleHTML(sec){
       <div class="ac-name">${sec.archetype}</div>
     </div>` : "";
   const prose = (sec.prose && sec.prose.length ? sec.prose : [
-    "This section of your Blueprint is being prepared. In the production portal, the full consulting-grade analysis for this dimension renders here, drawn from your assessment results.",
-    "Each deep-dive section follows the same structure as your Seven Lenses: a named pattern, an analysis of how it operates in your daily life, and a small set of concrete recommendations calibrated to your wiring.",
-    "Placeholder copy — the visual treatment shown here matches the final deliverable."
-  ]).map(p=>`<p>${p}</p>`).join("");
+    "This section of your Blueprint is being prepared. In the production portal, the full consulting grade analysis for this dimension renders here, drawn from your assessment results.",
+    "Each deep dive section follows the same structure as your Seven Lenses: a named pattern, an analysis of how it operates in your daily life, and a small set of concrete recommendations calibrated to your wiring.",
+    "Placeholder copy. The visual treatment shown here matches the final deliverable."
+  ]).map(p=>`<p>${renderTokens(p)}</p>`).join("");
   return `
     <article class="section-article">
       <img class="medallion-img" src="${sec.icon}" alt="">
@@ -1063,7 +1108,7 @@ function paywallHTML(sec){
   return `
     <div class="paywall-card">
       <div class="pw-lock">🔒</div>
-      <span class="smallcaps" style="display:block;margin-bottom:0.8rem;">Deep-Dive Add-On</span>
+      <span class="smallcaps" style="display:block;margin-bottom:0.8rem;">Deep Dive Add-On</span>
       <h3>This section is locked</h3>
       <p>${sec.desc}<br><br>Unlock <em>${sec.title}</em> to add it permanently to your Blueprint.</p>
       <button class="btn-gold" data-unlock="${sec.id}">Unlock for $49</button>
