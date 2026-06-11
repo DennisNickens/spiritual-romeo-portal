@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spiritual Romeo — Client Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy-1:#07071a;
+  --navy-2:#0f0a2e;
+  --navy-card:rgba(255,255,255,0.03);
+  --navy-card-2:rgba(255,255,255,0.055);
+  --gold:#d4a957;
+  --gold-bright:#e8c478;
+  --gold-dim:rgba(212,169,87,0.45);
+  --gold-faint:rgba(212,169,87,0.16);
+  --cream:#f5f1e8;
+  --cream-dim:rgba(245,241,232,0.62);
+  --cream-faint:rgba(245,241,232,0.38);
+  --line:rgba(212,169,87,0.22);
+  --line-soft:rgba(245,241,232,0.09);
+  --red:#c25b5b;
+  --serif:'Playfair Display',Georgia,serif;
+  --smallcaps:'Cormorant Garamond',Georgia,serif;
+  --sans:'Inter',-apple-system,'Helvetica Neue',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:var(--sans);
+  color:var(--cream);
+  background:#07071a;
+  background-image:
+    radial-gradient(ellipse 80% 60% at 70% -10%, rgba(58,42,110,0.35) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 15% 110%, rgba(40,28,84,0.3) 0%, transparent 60%),
+    linear-gradient(160deg, #07071a 0%, #0f0a2e 55%, #07071a 100%);
+  background-attachment:fixed;
+  min-height:100vh;
+  font-size:15px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--gold-faint);color:var(--gold-bright);}
+
+/* ============ shared atoms ============ */
+.smallcaps{
+  font-family:var(--smallcaps);
+  text-transform:uppercase;
+  letter-spacing:0.32em;
+  font-weight:500;
+  font-size:0.78rem;
+  color:var(--gold);
+}
+.btn-gold{
+  font-family:var(--sans);
+  font-weight:600;
+  font-size:0.85rem;
+  letter-spacing:0.06em;
+  color:#0a0820;
+  background:linear-gradient(135deg,#e0bb6d 0%,#d4a957 50%,#c2954a 100%);
+  border:none;
+  border-radius:4px;
+  padding:0.85rem 2rem;
+  cursor:pointer;
+  transition:transform .18s ease, box-shadow .18s ease, filter .18s ease;
+  box-shadow:0 2px 18px rgba(212,169,87,0.22);
+}
+.btn-gold:hover{transform:translateY(-1px);box-shadow:0 4px 26px rgba(212,169,87,0.38);filter:brightness(1.05);}
+.btn-gold:active{transform:translateY(0);}
+.btn-gold:disabled{opacity:.6;cursor:wait;transform:none;}
+.btn-outline{
+  font-family:var(--sans);
+  font-weight:500;
+  font-size:0.8rem;
+  letter-spacing:0.05em;
+  color:var(--gold);
+  background:transparent;
+  border:1px solid var(--gold-dim);
+  border-radius:4px;
+  padding:0.6rem 1.4rem;
+  cursor:pointer;
+  transition:all .18s ease;
+}
+.btn-outline:hover{border-color:var(--gold);background:var(--gold-faint);}
+.badge-owned{
+  display:inline-flex;align-items:center;gap:0.35rem;
+  font-family:var(--smallcaps);text-transform:uppercase;letter-spacing:0.22em;
+  font-size:0.72rem;font-weight:600;color:var(--gold-bright);
+  border:1px solid var(--gold-dim);border-radius:3px;
+  padding:0.35rem 0.85rem;background:var(--gold-faint);
+}
+
+/* ============ screens & transitions ============ */
+.screen{
+  display:none;
+  opacity:0;
+  transform:translateY(8px);
+  transition:opacity .45s ease, transform .45s ease;
+}
+.screen.active{display:block;}
+/* transform must end at `none` — a lingering transform creates a stacking
+   context that would trap the mobile sidebar below the fixed backdrop */
+.screen.visible{opacity:1;transform:none;}
+
+/* ============ logo ============ */
+.sr-logo{display:inline-block;line-height:0;}
+.sr-logo svg{display:block;}
+
+/* ============ LOGIN ============ */
+#screen-login{
+  min-height:100vh;
+  display:none;
+  align-items:center;justify-content:center;
+  padding:2rem 1.25rem;
+}
+#screen-login.active{display:flex;}
+.login-card{
+  width:100%;max-width:440px;
+  background:linear-gradient(180deg,rgba(255,255,255,0.045) 0%,rgba(255,255,255,0.018) 100%);
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:3.25rem 2.75rem 2.5rem;
+  text-align:center;
+  box-shadow:0 24px 80px rgba(0,0,0,0.5);
+  backdrop-filter:blur(6px);
+}
+.login-card h1{
+  font-family:var(--serif);font-weight:600;font-size:2rem;
+  margin:1.5rem 0 0.4rem;color:var(--cream);
+}
+.login-card .sub{color:var(--cream-dim);font-size:0.9rem;margin-bottom:2rem;font-weight:300;}
+.login-form input[type=email]{
+  width:100%;
+  font-family:var(--sans);font-size:0.95rem;color:var(--cream);
+  background:rgba(7,7,26,0.55);
+  border:1px solid var(--line-soft);
+  border-radius:4px;
+  padding:0.9rem 1.1rem;
+  margin-bottom:1rem;
+  outline:none;
+  transition:border-color .2s ease;
+}
+.login-form input[type=email]::placeholder{color:var(--cream-faint);}
+.login-form input[type=email]:focus{border-color:var(--gold-dim);}
+.login-form .btn-gold{width:100%;}
+.login-footnote{
+  margin-top:2.25rem;padding-top:1.5rem;border-top:1px solid var(--line-soft);
+  font-size:0.8rem;color:var(--cream-faint);font-weight:300;
+}
+.login-footnote a{color:var(--gold);text-decoration:none;border-bottom:1px solid var(--gold-faint);transition:border-color .2s;}
+.login-footnote a:hover{border-color:var(--gold);}
+.login-confirm{display:none;padding:0.5rem 0 1rem;}
+.login-confirm.show{display:block;animation:fadeUp .5s ease;}
+.login-confirm .check{
+  width:52px;height:52px;margin:0 auto 1.25rem;border-radius:50%;
+  border:1px solid var(--gold-dim);display:flex;align-items:center;justify-content:center;
+  color:var(--gold);font-size:1.3rem;background:var(--gold-faint);
+}
+.login-confirm p{color:var(--cream-dim);font-size:0.92rem;line-height:1.7;font-weight:300;}
+.login-confirm .dots{margin-top:1.5rem;color:var(--gold-dim);letter-spacing:0.4em;font-size:0.75rem;animation:pulse 1.2s ease infinite;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+@keyframes pulse{0%,100%{opacity:.4;}50%{opacity:1;}}
+
+/* ============ APP CHROME (header) ============ */
+#app-header{
+  position:sticky;top:0;z-index:60;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0.9rem 2rem;
+  background:rgba(7,7,26,0.82);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line-soft);
+}
+#app-header .header-left{display:flex;align-items:center;gap:0.9rem;cursor:pointer;}
+#app-header .brand-word{
+  font-family:var(--smallcaps);text-transform:uppercase;letter-spacing:0.3em;
+  font-size:0.8rem;color:var(--gold);white-space:nowrap;
+}
+#app-header .header-center{
+  position:absolute;left:50%;transform:translateX(-50%);
+  font-family:var(--serif);font-size:1.05rem;font-weight:500;color:var(--cream);
+  white-space:nowrap;
+}
+#app-header .header-right{display:flex;align-items:center;gap:1.5rem;}
+#app-header .header-right a{
+  font-size:0.8rem;color:var(--cream-dim);text-decoration:none;letter-spacing:0.04em;
+  transition:color .2s;cursor:pointer;
+}
+#app-header .header-right a:hover{color:var(--gold);}
+#hamburger{
+  display:none;
+  background:transparent;border:1px solid var(--line);border-radius:4px;
+  color:var(--gold);width:38px;height:34px;cursor:pointer;
+  font-size:1rem;line-height:1;align-items:center;justify-content:center;
+}
+
+/* ============ DASHBOARD ============ */
+.page-wrap{max-width:1080px;margin:0 auto;padding:2.5rem 2rem 5rem;}
+.hero-card{
+  display:flex;align-items:center;gap:2.25rem;
+  background:linear-gradient(135deg,rgba(212,169,87,0.10) 0%,rgba(255,255,255,0.03) 45%,rgba(255,255,255,0.015) 100%);
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:2.75rem 3rem;
+  box-shadow:0 18px 60px rgba(0,0,0,0.35);
+}
+.hero-medal{
+  flex:0 0 auto;width:108px;height:108px;border-radius:50%;
+  border:1px solid var(--gold-dim);
+  background:radial-gradient(circle at 35% 30%, rgba(212,169,87,0.28), rgba(212,169,87,0.06) 70%);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--serif);font-size:2.4rem;color:var(--gold);
+  box-shadow:inset 0 0 24px rgba(212,169,87,0.12), 0 0 40px rgba(212,169,87,0.10);
+}
+.hero-body{flex:1;}
+.hero-body .smallcaps{display:block;margin-bottom:0.4rem;}
+.hero-body h2{font-family:var(--serif);font-size:2.1rem;font-weight:600;margin-bottom:0.35rem;}
+.hero-body .hero-date{color:var(--cream-dim);font-size:0.88rem;font-weight:300;margin-bottom:1.5rem;}
+.section-label{
+  margin:3.25rem 0 1.5rem;display:flex;align-items:center;gap:1.25rem;
+}
+.section-label .smallcaps{flex:0 0 auto;}
+.section-label::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent);}
+.addon-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;
+}
+.addon-card{
+  background:var(--navy-card);
+  border:1px solid var(--line-soft);
+  border-radius:8px;
+  padding:1.75rem 1.6rem 1.5rem;
+  display:flex;flex-direction:column;
+  transition:border-color .25s ease, transform .25s ease, background .25s ease;
+}
+.addon-card:hover{border-color:var(--line);transform:translateY(-2px);background:var(--navy-card-2);}
+.addon-card .addon-glyph{
+  width:40px;height:40px;border-radius:50%;border:1px solid var(--gold-dim);
+  display:flex;align-items:center;justify-content:center;color:var(--gold);
+  font-size:1rem;margin-bottom:1.1rem;background:var(--gold-faint);
+}
+.addon-card h4{font-family:var(--serif);font-size:1.08rem;font-weight:600;margin-bottom:0.5rem;color:var(--cream);}
+.addon-card p{font-size:0.82rem;color:var(--cream-dim);font-weight:300;line-height:1.6;flex:1;margin-bottom:1.4rem;}
+.addon-card .addon-foot{display:flex;align-items:center;}
+.history-list{
+  border:1px solid var(--line-soft);border-radius:8px;overflow:hidden;
+  background:var(--navy-card);
+}
+.history-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.1rem 1.6rem;cursor:pointer;
+  border-bottom:1px solid var(--line-soft);
+  transition:background .2s ease;
+}
+.history-row:last-child{border-bottom:none;}
+.history-row:hover{background:var(--gold-faint);}
+.history-row .h-title{font-size:0.9rem;color:var(--cream);font-weight:400;}
+.history-row .h-title::before{content:"◆";color:var(--gold);font-size:0.55rem;margin-right:0.9rem;vertical-align:2px;}
+.history-row .h-date{font-size:0.78rem;color:var(--cream-faint);font-weight:300;letter-spacing:0.04em;}
+.history-row .h-arrow{color:var(--gold-dim);margin-left:1.25rem;font-size:0.8rem;transition:transform .2s;}
+.history-row:hover .h-arrow{transform:translateX(3px);color:var(--gold);}
+
+/* ============ SECTION VIEWER ============ */
+#viewer-layout{display:flex;min-height:calc(100vh - 60px);}
+#viewer-sidebar{
+  flex:0 0 280px;width:280px;
+  border-right:1px solid var(--line-soft);
+  background:rgba(7,7,26,0.45);
+}
+#viewer-sidebar .sidebar-inner{
+  position:sticky;top:60px;max-height:calc(100vh - 60px);overflow-y:auto;
+  padding:2rem 1.1rem 3rem;
+  scrollbar-width:thin;scrollbar-color:var(--gold-faint) transparent;
+}
+.nav-group-label{
+  font-family:var(--smallcaps);text-transform:uppercase;letter-spacing:0.26em;
+  font-size:0.7rem;color:var(--gold-dim);font-weight:600;
+  padding:0 0.9rem;margin:1.6rem 0 0.7rem;
+}
+.nav-group-label:first-child{margin-top:0;}
+.nav-item{
+  display:flex;align-items:center;gap:0.7rem;
+  width:100%;text-align:left;
+  font-family:var(--sans);font-size:0.85rem;font-weight:400;color:var(--cream-dim);
+  background:transparent;border:none;border-radius:5px;
+  padding:0.62rem 0.9rem;cursor:pointer;
+  transition:background .18s ease,color .18s ease;
+}
+.nav-item:hover{background:rgba(255,255,255,0.04);color:var(--cream);}
+.nav-item.current{background:var(--gold-faint);color:var(--gold-bright);}
+.nav-item .ni-glyph{flex:0 0 auto;width:14px;text-align:center;color:var(--gold-dim);font-size:0.75rem;}
+.nav-item.current .ni-glyph{color:var(--gold);}
+.nav-item .ni-label{flex:1;line-height:1.35;}
+.nav-item .ni-lock{flex:0 0 auto;color:var(--gold);font-size:0.72rem;opacity:.85;}
+.nav-item .ni-buy{
+  flex:0 0 auto;font-size:0.62rem;font-weight:600;letter-spacing:0.05em;
+  color:var(--gold);border:1px solid var(--gold-dim);border-radius:3px;
+  padding:0.18rem 0.45rem;background:transparent;cursor:pointer;white-space:nowrap;
+  transition:background .18s;
+}
+.nav-item .ni-buy:hover{background:var(--gold-faint);}
+.nav-divider{height:1px;background:var(--line-soft);margin:1.4rem 0.9rem;}
+#viewer-main{flex:1;min-width:0;}
+#viewer-content{
+  max-width:820px;margin:0 auto;padding:3.5rem 3rem 7rem;
+  transition:opacity .25s ease;
+}
+#viewer-content.fading{opacity:0;}
+
+/* reading / magazine styles */
+.section-article{margin-bottom:0;}
+.section-article + .section-article{margin-top:4.5rem;}
+.all-divider{
+  display:flex;align-items:center;gap:1.25rem;margin:4.25rem 0;
+}
+.all-divider::before,.all-divider::after{content:"";flex:1;height:1px;background:var(--line);}
+.all-divider span{color:var(--gold);font-size:0.85rem;}
+.medallion{
+  width:96px;height:96px;border-radius:50%;margin:0 auto 1.75rem;
+  border:1px solid var(--gold-dim);
+  background:radial-gradient(circle at 35% 30%, rgba(212,169,87,0.26), rgba(212,169,87,0.05) 72%);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--gold);font-size:2rem;
+  box-shadow:inset 0 0 20px rgba(212,169,87,0.1), 0 0 36px rgba(212,169,87,0.08);
+}
+.section-article .kicker{text-align:center;display:block;margin-bottom:0.9rem;}
+.section-article h2{
+  font-family:var(--serif);font-size:2.35rem;font-weight:600;line-height:1.2;
+  text-align:center;margin-bottom:0.75rem;color:var(--cream);
+}
+.section-article .deck{
+  font-family:var(--serif);font-style:italic;font-weight:400;font-size:1.05rem;
+  color:var(--cream-dim);text-align:center;margin-bottom:2.75rem;
+}
+.archetype-callout{
+  text-align:center;margin:0 auto 2.5rem;max-width:520px;
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  padding:1.6rem 1rem;
+}
+.archetype-callout .ac-pre{
+  font-family:var(--smallcaps);text-transform:uppercase;letter-spacing:0.3em;
+  font-size:0.72rem;color:var(--cream-faint);margin-bottom:0.45rem;
+}
+.archetype-callout .ac-name{
+  font-family:var(--serif);font-size:1.7rem;font-weight:600;color:var(--gold-bright);
+}
+.section-article .prose p{
+  font-size:1.02rem;font-weight:300;line-height:1.85;color:var(--cream);
+  margin-bottom:1.5rem;
+}
+.section-article .prose p:first-of-type::first-letter{
+  font-family:var(--serif);font-size:3.4rem;font-weight:500;color:var(--gold);
+  float:left;line-height:0.85;padding:0.28rem 0.65rem 0 0;
+}
+.score-block{margin:2.75rem 0 1rem;}
+.score-block .sb-title{
+  font-family:var(--smallcaps);text-transform:uppercase;letter-spacing:0.28em;
+  font-size:0.74rem;color:var(--gold);text-align:center;margin-bottom:1.6rem;font-weight:600;
+}
+.score-row{display:flex;align-items:center;gap:1.1rem;margin-bottom:1rem;}
+.score-row .sr-label{flex:0 0 110px;font-size:0.8rem;color:var(--cream-dim);text-align:right;letter-spacing:0.03em;}
+.score-row .sr-track{flex:1;height:7px;border-radius:4px;background:rgba(255,255,255,0.06);overflow:hidden;}
+.score-row .sr-fill{
+  display:block;height:100%;border-radius:4px;width:0;
+  background:linear-gradient(90deg,#a8843f,#d4a957,#e8c478);
+  transition:width 1.1s cubic-bezier(.22,.8,.3,1);
+  box-shadow:0 0 10px rgba(212,169,87,0.35);
+}
+.score-row .sr-pct{flex:0 0 42px;font-size:0.78rem;color:var(--gold);font-weight:500;}
+
+/* paywall */
+.paywall-card{
+  max-width:520px;margin:4.5rem auto 0;text-align:center;
+  border:1px solid var(--line);border-radius:10px;
+  background:linear-gradient(180deg,rgba(212,169,87,0.07),rgba(255,255,255,0.02));
+  padding:3.5rem 2.75rem;
+  box-shadow:0 18px 60px rgba(0,0,0,0.4);
+}
+.paywall-card .pw-lock{
+  width:62px;height:62px;border-radius:50%;margin:0 auto 1.5rem;
+  border:1px solid var(--gold-dim);background:var(--gold-faint);
+  display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:1.4rem;
+}
+.paywall-card h3{font-family:var(--serif);font-size:1.65rem;font-weight:600;margin-bottom:0.6rem;}
+.paywall-card p{color:var(--cream-dim);font-size:0.92rem;font-weight:300;line-height:1.7;margin-bottom:2rem;}
+
+/* ============ PROFILE ============ */
+.profile-card{
+  max-width:560px;margin:0 auto;
+  border:1px solid var(--line);border-radius:10px;
+  background:linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.015));
+  padding:3rem 2.75rem;
+  box-shadow:0 18px 60px rgba(0,0,0,0.35);
+}
+.profile-card h2{font-family:var(--serif);font-size:1.9rem;font-weight:600;text-align:center;margin:1.25rem 0 2.25rem;}
+.profile-card .sr-logo{display:flex;justify-content:center;}
+.pf-field{margin-bottom:1.4rem;}
+.pf-field label{
+  display:block;font-family:var(--smallcaps);text-transform:uppercase;
+  letter-spacing:0.24em;font-size:0.7rem;color:var(--gold-dim);font-weight:600;margin-bottom:0.4rem;
+}
+.pf-field .pf-value{font-size:1rem;color:var(--cream);font-weight:300;padding:0.35rem 0;border-bottom:1px solid var(--line-soft);}
+.pf-field input{
+  width:100%;font-family:var(--sans);font-size:1rem;color:var(--cream);
+  background:rgba(7,7,26,0.55);border:1px solid var(--gold-dim);border-radius:4px;
+  padding:0.6rem 0.85rem;outline:none;
+}
+.pf-meta{margin:2rem 0;font-size:0.8rem;color:var(--cream-faint);font-weight:300;text-align:center;letter-spacing:0.03em;}
+.pf-actions{display:flex;flex-direction:column;gap:0.9rem;margin-top:1.5rem;}
+.btn-signout{
+  font-family:var(--sans);font-weight:500;font-size:0.85rem;letter-spacing:0.05em;
+  color:var(--red);background:transparent;border:1px solid rgba(194,91,91,0.45);
+  border-radius:4px;padding:0.8rem 1.5rem;cursor:pointer;transition:all .2s;
+}
+.btn-signout:hover{background:rgba(194,91,91,0.12);border-color:var(--red);}
+
+/* ============ PAYMENT MODAL ============ */
+#modal-backdrop{
+  position:fixed;inset:0;z-index:90;
+  background:rgba(4,4,14,0.78);backdrop-filter:blur(5px);
+  display:none;align-items:center;justify-content:center;
+  opacity:0;transition:opacity .3s ease;padding:1.25rem;
+}
+#modal-backdrop.open{display:flex;}
+#modal-backdrop.visible{opacity:1;}
+.pay-modal{
+  width:100%;max-width:420px;
+  background:linear-gradient(180deg,#15102e,#0d0a22);
+  border:1px solid var(--line);border-radius:12px;
+  padding:2.25rem 2.25rem 2rem;
+  box-shadow:0 30px 90px rgba(0,0,0,0.65);
+  transform:translateY(14px) scale(.98);
+  transition:transform .3s cubic-bezier(.22,.8,.3,1.1);
+}
+#modal-backdrop.visible .pay-modal{transform:translateY(0) scale(1);}
+.pay-modal .pm-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.6rem;}
+.pay-modal .pm-head .smallcaps{font-size:0.7rem;}
+.pay-modal .pm-close{
+  background:transparent;border:none;color:var(--cream-faint);font-size:1.1rem;cursor:pointer;
+  padding:0.2rem 0.4rem;transition:color .2s;line-height:1;
+}
+.pay-modal .pm-close:hover{color:var(--cream);}
+.pay-modal .pm-item{
+  display:flex;justify-content:space-between;align-items:baseline;
+  border:1px solid var(--line-soft);border-radius:6px;
+  padding:1rem 1.2rem;margin-bottom:1.5rem;background:rgba(255,255,255,0.025);
+}
+.pay-modal .pm-item .pmi-name{font-family:var(--serif);font-size:1rem;color:var(--cream);max-width:65%;line-height:1.4;}
+.pay-modal .pm-item .pmi-price{font-family:var(--serif);font-size:1.45rem;color:var(--gold-bright);font-weight:600;}
+.pay-modal .pm-fieldlabel{font-size:0.68rem;text-transform:uppercase;letter-spacing:0.14em;color:var(--cream-faint);margin-bottom:0.35rem;font-weight:500;}
+.pay-modal .pm-cardrow{
+  display:flex;gap:0.6rem;margin-bottom:1.6rem;
+}
+.pay-modal .pm-input{
+  font-family:var(--sans);font-size:0.88rem;color:var(--cream-dim);
+  background:rgba(7,7,26,0.6);border:1px solid var(--line-soft);border-radius:5px;
+  padding:0.7rem 0.85rem;outline:none;width:100%;letter-spacing:0.06em;
+}
+.pay-modal .pm-input.small{width:84px;flex:0 0 auto;}
+.pay-modal .btn-gold{width:100%;}
+.pay-modal .pm-secure{
+  text-align:center;margin-top:1.1rem;font-size:0.7rem;color:var(--cream-faint);letter-spacing:0.06em;
+}
+.pay-modal .pm-success{display:none;text-align:center;padding:2rem 0 1.25rem;}
+.pay-modal.success .pm-success{display:block;animation:fadeUp .4s ease;}
+.pay-modal.success .pm-form{display:none;}
+.pay-modal .pm-success .check{
+  width:58px;height:58px;margin:0 auto 1.2rem;border-radius:50%;
+  border:1px solid var(--gold);background:var(--gold-faint);
+  display:flex;align-items:center;justify-content:center;color:var(--gold-bright);font-size:1.5rem;
+}
+.pay-modal .pm-success h4{font-family:var(--serif);font-size:1.35rem;font-weight:600;margin-bottom:0.4rem;}
+.pay-modal .pm-success p{color:var(--cream-dim);font-size:0.85rem;font-weight:300;}
+.spinner{
+  display:inline-block;width:14px;height:14px;border-radius:50%;
+  border:2px solid rgba(10,8,32,0.3);border-top-color:#0a0820;
+  animation:spin .7s linear infinite;vertical-align:-2px;margin-right:0.5rem;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ============ MOBILE ============ */
+#sidebar-backdrop{
+  position:fixed;inset:0;z-index:70;background:rgba(4,4,14,0.6);
+  display:none;opacity:0;transition:opacity .3s ease;
+}
+#sidebar-backdrop.open{display:block;}
+#sidebar-backdrop.visible{opacity:1;}
+@media (max-width:1023px){
+  #app-header{padding:0.8rem 1.1rem;}
+  #app-header .header-center{position:static;transform:none;font-size:0.92rem;overflow:hidden;text-overflow:ellipsis;}
+  #app-header .brand-word{display:none;}
+  #app-header .header-right a.hide-mobile{display:none;}
+  #hamburger.show{display:inline-flex;}
+  .page-wrap{padding:1.75rem 1.1rem 4rem;}
+  .hero-card{flex-direction:column;text-align:center;padding:2.25rem 1.5rem;gap:1.5rem;}
+  .addon-grid{grid-template-columns:1fr;}
+  #viewer-sidebar{
+    position:fixed;top:0;left:0;bottom:0;z-index:80;
+    width:300px;max-width:84vw;
+    background:#0b0922;
+    transform:translateX(-103%);
+    transition:transform .32s cubic-bezier(.22,.8,.3,1);
+    border-right:1px solid var(--line);
+    box-shadow:24px 0 60px rgba(0,0,0,0.5);
+  }
+  #viewer-sidebar.open{transform:translateX(0);}
+  #viewer-sidebar .sidebar-inner{position:static;max-height:100vh;height:100%;padding-top:2.5rem;}
+  #viewer-content{padding:2.5rem 1.4rem 6rem;}
+  .section-article h2{font-size:1.85rem;}
+  .score-row .sr-label{flex-basis:88px;font-size:0.72rem;}
+  .history-row{padding:1rem 1.1rem;flex-wrap:wrap;gap:0.2rem;}
+  .profile-card{padding:2.25rem 1.5rem;}
+}
+@media (min-width:1024px) and (max-width:1240px){
+  .addon-grid{grid-template-columns:repeat(2,1fr);}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= SCREEN 1 : LOGIN ================= -->
+<div id="screen-login" class="screen active">
+  <div class="login-card">
+    <div class="sr-logo" data-logo="72"></div>
+    <div id="login-form-wrap">
+      <h1>Welcome back</h1>
+      <p class="sub">Enter your email to access your Blueprint</p>
+      <!-- REPLACE WITH PRODUCTION SERVICE: real magic-link auth via Resend or Postmark.
+           The form below simulates sending a login link and auto-authenticates after 2s. -->
+      <form class="login-form" id="login-form">
+        <input type="email" id="login-email" placeholder="you@example.com" required autocomplete="email">
+        <button type="submit" class="btn-gold">Send me a login link</button>
+      </form>
+    </div>
+    <div class="login-confirm" id="login-confirm">
+      <div class="check">✉</div>
+      <h1 style="margin-top:0;font-size:1.5rem;">Check your inbox</h1>
+      <p>We just sent a one-time login link to that email.<br>The link works for 15 minutes.</p>
+      <div class="dots">● ● ●</div>
+    </div>
+    <p class="login-footnote">Don’t have a Blueprint yet? Take The Blueprint at <a href="https://dennisnickens.com" target="_blank" rel="noopener">dennisnickens.com</a>.</p>
+  </div>
+</div>
+
+<!-- ================= APP SHELL ================= -->
+<div id="screen-app" class="screen">
+  <header id="app-header">
+    <div class="header-left" id="header-home">
+      <span class="sr-logo" data-logo="38"></span>
+      <span class="brand-word">Spiritual Romeo</span>
+    </div>
+    <div class="header-center" id="header-welcome">Welcome, Tyrone</div>
+    <div class="header-right">
+      <a id="nav-profile" class="hide-mobile">Profile</a>
+      <a id="nav-signout" class="hide-mobile">Sign out</a>
+      <button id="hamburger" aria-label="Open sections menu">☰</button>
+    </div>
+  </header>
+
+  <!-- ===== Screen 2 : Dashboard ===== -->
+  <div id="view-dashboard" class="screen">
+    <div class="page-wrap">
+      <div class="hero-card">
+        <div class="hero-medal">✦</div>
+        <div class="hero-body">
+          <span class="smallcaps">Your Personal Operating Manual</span>
+          <h2>Your Blueprint</h2>
+          <p class="hero-date" id="hero-date">Taken June 8, 2026</p>
+          <button class="btn-gold" id="open-blueprint">Open my Blueprint</button>
+        </div>
+      </div>
+
+      <div class="section-label"><span class="smallcaps">Your Add-Ons</span></div>
+      <div class="addon-grid" id="addon-grid"></div>
+
+      <div class="section-label"><span class="smallcaps">Your History</span></div>
+      <div class="history-list" id="history-list"></div>
+    </div>
+  </div>
+
+  <!-- ===== Screen 3 : Section Viewer ===== -->
+  <div id="view-viewer" class="screen">
+    <div id="viewer-layout">
+      <aside id="viewer-sidebar">
+        <div class="sidebar-inner" id="sidebar-nav"></div>
+      </aside>
+      <main id="viewer-main">
+        <div id="viewer-content"></div>
+      </main>
+    </div>
+  </div>
+
+  <!-- ===== Screen 4 : Profile ===== -->
+  <div id="view-profile" class="screen">
+    <div class="page-wrap" style="padding-top:3.5rem;">
+      <div class="profile-card">
+        <div class="sr-logo" data-logo="56"></div>
+        <h2>Your Profile</h2>
+        <div id="profile-fields"></div>
+        <p class="pf-meta" id="profile-created">Account created on June 8, 2026</p>
+        <div class="pf-actions">
+          <button class="btn-outline" id="edit-profile">Edit profile</button>
+          <button class="btn-signout" id="profile-signout">Sign out</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- mobile sidebar backdrop -->
+<div id="sidebar-backdrop"></div>
+
+<!-- ================= PAYMENT MODAL ================= -->
+<div id="modal-backdrop">
+  <div class="pay-modal" id="pay-modal">
+    <div class="pm-head">
+      <span class="smallcaps">Secure Checkout</span>
+      <button class="pm-close" id="modal-close" aria-label="Close">✕</button>
+    </div>
+    <div class="pm-form">
+      <div class="pm-item">
+        <span class="pmi-name" id="modal-item-name">Add-On</span>
+        <span class="pmi-price">$49</span>
+      </div>
+      <!-- REPLACE WITH PRODUCTION SERVICE: real Stripe Checkout session + webhook that
+           updates the customer's add-on entitlements field in GoHighLevel. -->
+      <div class="pm-fieldlabel">Card information</div>
+      <input class="pm-input" value="4242 4242 4242 4242" readonly style="margin-bottom:0.6rem;">
+      <div class="pm-cardrow">
+        <input class="pm-input small" value="12 / 28" readonly>
+        <input class="pm-input small" value="424" readonly>
+        <input class="pm-input" value="ZIP" readonly>
+      </div>
+      <button class="btn-gold" id="pay-btn">Pay $49</button>
+      <p class="pm-secure">🔒 Encrypted &amp; secure · Powered by Stripe</p>
+    </div>
+    <div class="pm-success">
+      <div class="check">✓</div>
+      <h4>Payment confirmed</h4>
+      <p>Your section is unlocking now…</p>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   SPIRITUAL ROMEO — CLIENT PORTAL (interactive prototype)
+   All auth, customer data, and payments are simulated.
+   Search "REPLACE WITH PRODUCTION SERVICE" for production wiring points.
+   ===================================================================== */
+
+/* ---------------- mock data ---------------- */
+/* REPLACE WITH PRODUCTION SERVICE: pull the contact record, Blueprint URL
+   custom field, and add-on entitlements field from the GoHighLevel API. */
+const customer = {
+  firstName: "Tyrone",
+  lastName: "Franklin",
+  email: "robert.t.franklin1@gmail.com",
+  blueprintDate: "June 8, 2026",
+  accountCreated: "June 8, 2026",
+};
+
+const LENSES = [
+  {
+    id:"behavior", glyph:"◈", title:"Behavior Profile",
+    deck:"How you instinctively move through the world.",
+    archetype:"The Caretaker",
+    prose:[
+      "You lead with care. Before you act, you read the room — who is carrying weight, who is overlooked, what needs tending that no one else has noticed. Where others see tasks, you see people, and your first instinct in nearly every situation is to stabilize, protect, and provide. This is not softness; it is a deliberate form of strength that organizations and families quietly depend on.",
+      "Caretakers operate on a long time horizon. You rarely chase the quick win, because you are measuring outcomes in trust built, relationships preserved, and people developed. In practice this means you will absorb short-term cost — extra hours, deferred recognition, uncomfortable conversations — to protect long-term health. The people around you experience this as reliability. You experience it as simply doing what needs to be done.",
+      "The shadow side of your wiring is over-extension. Because you instinctively move toward need, you can fill every gap you see until there is nothing left in reserve. Your Blueprint flags this directly: your effectiveness is highest when you treat your own capacity as an asset to be managed, not an infinite resource to be spent. The score profile below shows how your behavioral energy distributes across the four drive patterns."
+    ],
+    scores:{title:"Your Drive Pattern Breakdown", rows:[
+      ["Commander",14],["Organizer",22],["Relator",47],["Energizer",17]
+    ]}
+  },
+  {
+    id:"personality", glyph:"✦", title:"Personality Code",
+    deck:"The architecture beneath your outward style.",
+    archetype:"The Architect-Harmonizer",
+    prose:[
+      "Underneath your warm exterior is a structural thinker. You do not just want people to be at peace — you want the systems around them to make peace sustainable. This pairing is rarer than it sounds: most harmonizers smooth conflict in the moment, while most architects design without reference to the human cost. You do both, and that dual fluency is the core of your Personality Code.",
+      "In decision-making, you run a two-pass process. The first pass is analytical — you map the options, the constraints, and the second-order consequences with unusual speed. The second pass is relational — you ask who will be affected, who needs to be brought along, and what the decision will communicate. When you are given time to run both passes, your judgment is consistently excellent. When you are forced to skip the second pass, you feel the decision as unfinished, even when it is technically correct.",
+      "Your growth edge is decisiveness under social cost. Because you can see every stakeholder's position, you can delay choices that will disappoint someone, hoping a better option will surface. Your Blueprint recommends a simple discipline: name the decision deadline out loud, to another person, at the moment you spot yourself holding two passes open. Externalizing the deadline converts your harmonizer instinct from a brake into an ally."
+    ]
+  },
+  {
+    id:"action", glyph:"❖", title:"Action Style",
+    deck:"How you convert intention into motion.",
+    archetype:"The Steady Finisher",
+    prose:[
+      "You are built for the second half of the race. Many people generate ideas and early momentum; far fewer carry work through the unglamorous middle and across the finish line. Your action style is paced, consistent, and quietly relentless. You distrust bursts and trust routines — and your track record proves the instinct right.",
+      "This means your highest-leverage environments are ones with clear ownership and room to establish rhythm. You degrade in environments that reward visible urgency over actual completion, because you will not perform busyness, and shallow cultures sometimes misread your steadiness as a lack of fire. It is not. It is fire with a governor on it, which is exactly what long projects require.",
+      "Watch one pattern closely: you finish other people's priorities at the same standard as your own. That is honorable, and it is also how Steady Finishers end up running on agendas they never chose. The 30-Day Action Plan add-on builds a filter for this — a weekly review that separates commitments you made from commitments that drifted onto you."
+    ]
+  },
+  {
+    id:"connection", glyph:"❧", title:"Connection Currency",
+    deck:"The language in which you give and receive care.",
+    archetype:"Quality Presence",
+    prose:[
+      "Your primary connection currency is presence. You feel most loved not through words or gestures, but when someone gives you their full, unhurried attention — and you pay love out the same way. When you sit with someone, you are entirely there, and people consistently describe conversations with you as feeling 'different,' even when they cannot say why.",
+      "The risk in your profile is asymmetry. Because presence is expensive and modern life is fragmented, the people closest to you may be paying you in currencies you do not register — quick texts, small favors, words of affirmation — while you quietly run a deficit. The reverse is also true: your steady presence can go unnoticed by someone whose currency is verbal. Neither side is failing to love; you are trading in different denominations.",
+      "Your Blueprint recommends one explicit conversation per key relationship: name your currency, ask for theirs, and agree on the exchange rate. The breakdown below shows how the five currencies rank in your wiring."
+    ],
+    scores:{title:"Your Currency Breakdown", rows:[
+      ["Presence",38],["Service",24],["Words",18],["Gifts",12],["Touch",8]
+    ]}
+  },
+  {
+    id:"learning", glyph:"✺", title:"Learning Channel",
+    deck:"How new information actually gets into you.",
+    archetype:"Visual-Reflective",
+    prose:[
+      "You learn through the eye and the pause. New material lands for you when you can see it — diagrams, written pages, watching a thing done — and it sticks when you are given silence afterward to integrate. You are not slow; you are deep. The same lecture that a verbal processor masters in the room, you master that evening, more thoroughly, on the second pass you take alone.",
+      "This has a direct implication for how you should consume this Blueprint: read it in sittings, not in one push, and keep something to write with. Your retention roughly doubles when you translate what you read into your own sketches and margin notes, because translation is where your channel does its real work.",
+      "In professional settings, protect your integration time without apologizing for it. 'Let me look at this and come back tomorrow with a view' is not a delay — for your wiring, it is the actual mechanism of understanding. Teams that learn to give you the overnight loop get dramatically better output from you than teams that demand reactions live in the meeting."
+    ]
+  },
+  {
+    id:"spiritual-wiring", glyph:"☩", title:"Spiritual Wiring",
+    deck:"The posture of your inner life.",
+    archetype:"The Intercessor",
+    prose:[
+      "Your spiritual life runs toward others. Where some are wired for study and others for celebration, your native posture is standing in the gap — holding people, situations, and outcomes before God with a persistence that does not depend on visible results. You may have done this for years without naming it; it is simply how your interior life works.",
+      "Intercessors carry a particular burden: you feel the weight of what you carry, and because the work is invisible, it is rarely acknowledged or shared. Your Blueprint identifies this as your primary point of spiritual fatigue. The discipline that protects you is rhythm — fixed times that begin and end, rather than an always-on vigilance that never sets the weight down.",
+      "Your wiring also explains a pattern you have likely noticed: people confide in you quickly, often within minutes of meeting you. They are responding to something real. The Ministry Profile add-on maps where this wiring is best deployed — and just as importantly, the roles that look spiritual but would quietly starve it."
+    ]
+  },
+  {
+    id:"spiritual-gifts", glyph:"✣", title:"Spiritual Gifts",
+    deck:"What you have been given to give.",
+    archetype:"Discernment · Encouragement · Teaching",
+    prose:[
+      "Three gifts lead your profile, and they compound. Discernment lets you read what is actually happening beneath what is being said. Encouragement lets you speak to it in a way people can receive. Teaching lets you turn the moment into something the person can carry forward and use without you. Together they make you a builder of people — not in the abstract, but one conversation at a time.",
+      "The ordering matters. Discernment is your first gift, which means your perceptions usually arrive before your words are ready. Trust the perception; take your time with the delivery. When you have rushed in the past, it was almost never the insight that misfired — it was the timing.",
+      "A gift profile like yours is most at risk of being spent entirely in private. Because all three gifts operate one-on-one, you can have an enormous cumulative impact that no structure ever sees, names, or develops. The leadership and ministry add-ons in your Blueprint address exactly this: how to bring a personal gifting into roles with shape and reach, without losing the intimacy that makes it work."
+    ]
+  }
+];
+
+const ADDONS = [
+  {
+    id:"misalignment", glyph:"⚯", title:"Misalignment Map",
+    desc:"Pinpoints where your daily life is running against your wiring — and what it is costing you.",
+    onDashboard:false,
+    deck:"Where your life and your wiring disagree.", archetype:null, prose:[]
+  },
+  {
+    id:"career", glyph:"◬", title:"Career Alignment Deep-Dive",
+    desc:"Maps your wiring against your current role and shows where your work fits you — and where it fights you.",
+    onDashboard:true,
+    deck:"Your wiring, measured against your work.",
+    archetype:"Alignment Score: 71 / 100",
+    prose:[
+      "Your current role sits in moderate alignment with your Blueprint — strong on the dimensions that matter most to your wiring, with two specific friction points that explain most of your work-related fatigue. The strength first: your role rewards completion over theater, which suits your Steady Finisher action style almost perfectly. You are evaluated on what ships, and that is the scoreboard your wiring wants.",
+      "The first friction point is meeting density. Your Visual-Reflective learning channel and two-pass decision style both require integration time, and your current calendar provides almost none. The audit in this section estimates you are making roughly a third of your decisions on a single pass — technically adequate, but well below the quality your wiring produces when it has the overnight loop. Reclaiming two protected half-days per week would likely raise your decision quality more than any skill investment available to you.",
+      "The second friction point is invisibility of care work. A significant share of your actual contribution — stabilizing colleagues, absorbing ambiguity, preventing problems — is Caretaker labor that your organization consumes but does not measure. The recommendation is not to stop; it is to convert. This section closes with three concrete ways to translate care work into named, scoped responsibilities that appear on the record you are evaluated against."
+    ]
+  },
+  {
+    id:"relationship", glyph:"♾", title:"Relationship Alignment Deep-Dive",
+    desc:"Translates your Connection Currency into practical guidance for your closest relationship.",
+    onDashboard:true,
+    deck:"The exchange rate of your closest bond.",
+    archetype:"Primary Pattern: The Presence Gap",
+    prose:[
+      "This deep-dive applies your Connection Currency profile to the architecture of a primary relationship. Your dominant currency — Quality Presence — is both your greatest relational asset and the source of your most predictable conflict pattern, which this section names the Presence Gap: the recurring experience of being physically together while one partner's attention is elsewhere, registered by your wiring as a withdrawal even when no slight was intended.",
+      "Because you pay love in presence, you also keep accounts in it. The analysis here walks through what happens in your wiring during a stretch of fragmented attention: the deficit accumulates silently, without complaint, until it surfaces sideways — usually as withdrawal of your own. Your partner, trading in a different currency, often has no idea a debt was accruing. Neither of you is wrong. You are settling in different denominations.",
+      "The protocol this section recommends is deliberately small: one exchange-rate conversation, one recurring block of protected, device-free time, and one named signal either partner can use to flag the gap before it converts to distance. Couples with your profile rarely need more intervention than this — they need the pattern named, and a shared language for catching it early."
+    ]
+  },
+  {
+    id:"parenting", glyph:"❂", title:"Parenting Style Map",
+    desc:"Shows how your wiring shapes the way you parent — and how to reach each child's wiring.",
+    onDashboard:true,
+    deck:"How a Caretaker raises — and what each child needs.", archetype:null, prose:[]
+  },
+  {
+    id:"leadership", glyph:"♕", title:"Leadership Profile Deep-Dive",
+    desc:"Decodes how you lead, how you derail, and the conditions where you do your best work.",
+    onDashboard:true,
+    deck:"The shape of your authority.", archetype:null, prose:[]
+  },
+  {
+    id:"ministry", glyph:"✠", title:"Ministry Profile Deep-Dive",
+    desc:"Aligns your spiritual gifts with the service roles where you will have the deepest impact.",
+    onDashboard:true,
+    deck:"Where your gifts are meant to be spent.", archetype:null, prose:[]
+  },
+  {
+    id:"plan30", glyph:"➤", title:"30-Day Action Plan",
+    desc:"A guided month of small moves that bring your daily life into line with your Blueprint.",
+    onDashboard:true,
+    deck:"One month. Small moves. Real alignment.", archetype:null, prose:[]
+  }
+];
+
+/* entitlements — REPLACE WITH PRODUCTION SERVICE: read/write the add-on
+   entitlements field on the GHL contact record. */
+const owned = new Set(["career","relationship"]);
+
+const HISTORY = [
+  {title:"Took The Blueprint", date:"June 8, 2026", detail:"Completed the full Blueprint assessment (all seven lenses). Report generated and delivered to robert.t.franklin1@gmail.com."},
+  {title:"Unlocked Career Alignment Deep-Dive", date:"June 9, 2026", detail:"Purchased the Career Alignment Deep-Dive add-on for $49."},
+  {title:"Unlocked Relationship Alignment Deep-Dive", date:"June 9, 2026", detail:"Purchased the Relationship Alignment Deep-Dive add-on for $49."},
+  {title:"Received Couples Connection Map", date:"June 9, 2026", detail:"Couples Connection Map delivered as part of the Relationship Alignment Deep-Dive."}
+];
+
+/* ---------------- logo ---------------- */
+function logoSVG(size){
+  return `
+  <svg width="${size}" height="${size}" viewBox="0 0 120 132" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Spiritual Romeo">
+    <!-- crown -->
+    <path d="M46 16 L50 5 L56 13 L60 2 L64 13 L70 5 L74 16 Z" fill="#d4a957" opacity="0.95"/>
+    <rect x="46" y="17.5" width="28" height="2.5" rx="1.2" fill="#d4a957"/>
+    <!-- outer ring -->
+    <circle cx="60" cy="74" r="42" stroke="#d4a957" stroke-width="1.6"/>
+    <circle cx="60" cy="74" r="37" stroke="#d4a957" stroke-width="0.6" opacity="0.55"/>
+    <!-- SR monogram -->
+    <text x="60" y="86" text-anchor="middle" font-family="Playfair Display, Georgia, serif" font-size="33" font-weight="600" fill="#d4a957" letter-spacing="1">SR</text>
+    <!-- laurel left -->
+    <g stroke="#d4a957" stroke-width="1.1" fill="#d4a957">
+      <path d="M22 96 Q14 78 20 58" fill="none"/>
+      <ellipse cx="17" cy="62" rx="5.5" ry="2.1" transform="rotate(-62 17 62)"/>
+      <ellipse cx="15" cy="73" rx="5.5" ry="2.1" transform="rotate(-80 15 73)"/>
+      <ellipse cx="16" cy="84" rx="5.5" ry="2.1" transform="rotate(-95 16 84)"/>
+      <ellipse cx="20" cy="94" rx="5.5" ry="2.1" transform="rotate(-115 20 94)"/>
+      <ellipse cx="27" cy="103" rx="5.5" ry="2.1" transform="rotate(-135 27 103)"/>
+    </g>
+    <!-- laurel right -->
+    <g stroke="#d4a957" stroke-width="1.1" fill="#d4a957">
+      <path d="M98 96 Q106 78 100 58" fill="none"/>
+      <ellipse cx="103" cy="62" rx="5.5" ry="2.1" transform="rotate(62 103 62)"/>
+      <ellipse cx="105" cy="73" rx="5.5" ry="2.1" transform="rotate(80 105 73)"/>
+      <ellipse cx="104" cy="84" rx="5.5" ry="2.1" transform="rotate(95 104 84)"/>
+      <ellipse cx="100" cy="94" rx="5.5" ry="2.1" transform="rotate(115 100 94)"/>
+      <ellipse cx="93" cy="103" rx="5.5" ry="2.1" transform="rotate(135 93 103)"/>
+    </g>
+    <!-- base tie -->
+    <path d="M52 124 Q60 129 68 124" stroke="#d4a957" stroke-width="1.4" fill="none"/>
+  </svg>`;
+}
+document.querySelectorAll(".sr-logo").forEach(el=>{
+  el.innerHTML = logoSVG(parseInt(el.dataset.logo||"48",10));
+});
+
+/* ---------------- screen / view switching ---------------- */
+const screens = {
+  login: document.getElementById("screen-login"),
+  app:   document.getElementById("screen-app"),
+};
+const views = {
+  dashboard: document.getElementById("view-dashboard"),
+  viewer:    document.getElementById("view-viewer"),
+  profile:   document.getElementById("view-profile"),
+};
+let currentView = "dashboard";
+
+function showScreen(el){
+  Object.values(screens).forEach(s=>{s.classList.remove("active","visible");});
+  el.classList.add("active");
+  requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add("visible")));
+}
+function showView(name){
+  Object.values(views).forEach(v=>{v.classList.remove("active","visible");});
+  const v = views[name];
+  v.classList.add("active");
+  requestAnimationFrame(()=>requestAnimationFrame(()=>v.classList.add("visible")));
+  currentView = name;
+  document.getElementById("hamburger").classList.toggle("show", name==="viewer");
+  closeSidebar();
+  window.scrollTo({top:0});
+}
+
+/* ---------------- login flow ---------------- */
+document.getElementById("login-form").addEventListener("submit", e=>{
+  e.preventDefault();
+  /* REPLACE WITH PRODUCTION SERVICE: POST the email to the magic-link
+     endpoint (Resend / Postmark) instead of simulating. */
+  document.getElementById("login-form-wrap").style.display="none";
+  document.getElementById("login-confirm").classList.add("show");
+  setTimeout(()=>{
+    showScreen(screens.app);
+    showView("dashboard");
+    // reset login card for next sign-out
+    setTimeout(()=>{
+      document.getElementById("login-form-wrap").style.display="";
+      document.getElementById("login-confirm").classList.remove("show");
+      document.getElementById("login-email").value="";
+    },600);
+  }, 2000);
+});
+
+function signOut(){
+  showScreen(screens.login);
+}
+document.getElementById("nav-signout").addEventListener("click", signOut);
+document.getElementById("profile-signout").addEventListener("click", signOut);
+document.getElementById("nav-profile").addEventListener("click", ()=>showView("profile"));
+document.getElementById("header-home").addEventListener("click", ()=>showView("dashboard"));
+document.getElementById("open-blueprint").addEventListener("click", ()=>{
+  showView("viewer");
+  selectSection(currentSection || "behavior");
+});
+
+/* ---------------- dashboard rendering ---------------- */
+document.getElementById("header-welcome").textContent = `Welcome, ${customer.firstName}`;
+document.getElementById("hero-date").textContent = `Taken ${customer.blueprintDate}`;
+
+function renderAddonGrid(){
+  const grid = document.getElementById("addon-grid");
+  grid.innerHTML = "";
+  ADDONS.filter(a=>a.onDashboard).forEach(a=>{
+    const card = document.createElement("div");
+    card.className = "addon-card";
+    const foot = owned.has(a.id)
+      ? `<span class="badge-owned">✦ Owned</span>`
+      : `<button class="btn-outline" data-buy="${a.id}">Buy for $49</button>`;
+    card.innerHTML = `
+      <div class="addon-glyph">${a.glyph}</div>
+      <h4>${a.title}</h4>
+      <p>${a.desc}</p>
+      <div class="addon-foot">${foot}</div>`;
+    grid.appendChild(card);
+  });
+  grid.querySelectorAll("[data-buy]").forEach(btn=>{
+    btn.addEventListener("click", ()=>openPayModal(btn.dataset.buy));
+  });
+}
+
+function renderHistory(){
+  const list = document.getElementById("history-list");
+  list.innerHTML = "";
+  HISTORY.forEach(h=>{
+    const row = document.createElement("div");
+    row.className = "history-row";
+    row.innerHTML = `
+      <span class="h-title">${h.title}</span>
+      <span style="display:flex;align-items:center;">
+        <span class="h-date">${h.date}</span><span class="h-arrow">→</span>
+      </span>`;
+    row.addEventListener("click", ()=>{
+      alert(`${h.title}\n${h.date}\n\n${h.detail}`);
+    });
+    list.appendChild(row);
+  });
+}
+
+/* ---------------- profile ---------------- */
+let editing = false;
+function renderProfile(){
+  const wrap = document.getElementById("profile-fields");
+  if(!editing){
+    wrap.innerHTML = `
+      <div class="pf-field"><label>First name</label><div class="pf-value">${customer.firstName}</div></div>
+      <div class="pf-field"><label>Last name</label><div class="pf-value">${customer.lastName}</div></div>
+      <div class="pf-field"><label>Email</label><div class="pf-value">${customer.email}</div></div>`;
+  } else {
+    wrap.innerHTML = `
+      <div class="pf-field"><label>First name</label><input id="pf-first" value="${customer.firstName}"></div>
+      <div class="pf-field"><label>Last name</label><input id="pf-last" value="${customer.lastName}"></div>
+      <div class="pf-field"><label>Email</label><input id="pf-email" value="${customer.email}"></div>`;
+  }
+  document.getElementById("edit-profile").textContent = editing ? "Save changes" : "Edit profile";
+}
+document.getElementById("edit-profile").addEventListener("click", ()=>{
+  if(editing){
+    customer.firstName = document.getElementById("pf-first").value.trim() || customer.firstName;
+    customer.lastName  = document.getElementById("pf-last").value.trim()  || customer.lastName;
+    customer.email     = document.getElementById("pf-email").value.trim() || customer.email;
+    document.getElementById("header-welcome").textContent = `Welcome, ${customer.firstName}`;
+  }
+  editing = !editing;
+  renderProfile();
+});
+document.getElementById("profile-created").textContent = `Account created on ${customer.accountCreated}`;
+
+/* ---------------- section viewer ---------------- */
+let currentSection = "behavior";
+
+function renderSidebar(){
+  const nav = document.getElementById("sidebar-nav");
+  nav.innerHTML = "";
+
+  const groupLabel = (txt)=>{
+    const d = document.createElement("div");
+    d.className="nav-group-label"; d.textContent=txt; return d;
+  };
+  const makeItem = (sec, locked)=>{
+    const b = document.createElement("button");
+    b.className = "nav-item" + (currentSection===sec.id ? " current" : "");
+    b.dataset.section = sec.id;
+    let trailing = "";
+    if(locked){
+      trailing = `<span class="ni-lock" title="Locked">🔒</span><button class="ni-buy" data-buy="${sec.id}">Buy&nbsp;for&nbsp;$49</button>`;
+    }
+    b.innerHTML = `<span class="ni-glyph">${sec.glyph}</span><span class="ni-label">${sec.title}</span>${trailing}`;
+    b.addEventListener("click", e=>{
+      if(e.target.closest(".ni-buy")){ openPayModal(sec.id); return; }
+      selectSection(sec.id);
+    });
+    return b;
+  };
+
+  nav.appendChild(groupLabel("Your Seven Lenses"));
+  LENSES.forEach(s=>nav.appendChild(makeItem(s,false)));
+  nav.appendChild(groupLabel("Deep-Dive Add-Ons"));
+  ADDONS.forEach(s=>nav.appendChild(makeItem(s, !owned.has(s.id))));
+
+  const div = document.createElement("div");
+  div.className="nav-divider";
+  nav.appendChild(div);
+
+  const all = document.createElement("button");
+  all.className = "nav-item" + (currentSection==="all" ? " current" : "");
+  all.innerHTML = `<span class="ni-glyph">📖</span><span class="ni-label" style="letter-spacing:0.18em;font-weight:500;">ALL</span>`;
+  all.addEventListener("click", ()=>selectSection("all"));
+  nav.appendChild(all);
+}
+
+function articleHTML(sec){
+  let scores = "";
+  if(sec.scores){
+    scores = `<div class="score-block"><div class="sb-title">${sec.scores.title}</div>` +
+      sec.scores.rows.map(([label,pct])=>`
+        <div class="score-row">
+          <span class="sr-label">${label}</span>
+          <span class="sr-track"><span class="sr-fill" data-pct="${pct}"></span></span>
+          <span class="sr-pct">${pct}%</span>
+        </div>`).join("") + `</div>`;
+  }
+  const archetype = sec.archetype ? `
+    <div class="archetype-callout">
+      <div class="ac-pre">You are</div>
+      <div class="ac-name">${sec.archetype}</div>
+    </div>` : "";
+  const prose = (sec.prose && sec.prose.length ? sec.prose : [
+    "This section of your Blueprint is being prepared. In the production portal, the full consulting-grade analysis for this dimension renders here, drawn from your assessment results.",
+    "Each deep-dive section follows the same structure as your Seven Lenses: a named pattern, an analysis of how it operates in your daily life, and a small set of concrete recommendations calibrated to your wiring.",
+    "Placeholder copy — the visual treatment shown here matches the final deliverable."
+  ]).map(p=>`<p>${p}</p>`).join("");
+  return `
+    <article class="section-article">
+      <div class="medallion">${sec.glyph}</div>
+      <span class="kicker smallcaps">The Blueprint · ${customer.firstName} ${customer.lastName}</span>
+      <h2>${sec.title}</h2>
+      <p class="deck">${sec.deck}</p>
+      ${archetype}
+      <div class="prose">${prose}</div>
+      ${scores}
+    </article>`;
+}
+
+function paywallHTML(sec){
+  return `
+    <div class="paywall-card">
+      <div class="pw-lock">🔒</div>
+      <span class="smallcaps" style="display:block;margin-bottom:0.8rem;">Deep-Dive Add-On</span>
+      <h3>This section is locked</h3>
+      <p>${sec.desc}<br><br>Unlock <em>${sec.title}</em> to add it permanently to your Blueprint.</p>
+      <button class="btn-gold" data-unlock="${sec.id}">Unlock for $49</button>
+    </div>`;
+}
+
+function animateScoreBars(container){
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    container.querySelectorAll(".sr-fill").forEach(f=>{ f.style.width = f.dataset.pct + "%"; });
+  }));
+}
+
+function selectSection(id){
+  currentSection = id;
+  const content = document.getElementById("viewer-content");
+  content.classList.add("fading");
+  setTimeout(()=>{
+    let html = "";
+    if(id === "all"){
+      const ownedSections = [...LENSES, ...ADDONS.filter(a=>owned.has(a.id))];
+      html = ownedSections.map((s,i)=>
+        (i>0 ? `<div class="all-divider"><span>✦</span></div>` : "") + articleHTML(s)
+      ).join("");
+    } else {
+      const sec = LENSES.find(s=>s.id===id) || ADDONS.find(s=>s.id===id);
+      const locked = !LENSES.includes(sec) && !owned.has(sec.id);
+      html = locked ? paywallHTML(sec) : articleHTML(sec);
+    }
+    content.innerHTML = html;
+    content.querySelectorAll("[data-unlock]").forEach(btn=>{
+      btn.addEventListener("click", ()=>openPayModal(btn.dataset.unlock));
+    });
+    content.classList.remove("fading");
+    animateScoreBars(content);
+    renderSidebar();
+    closeSidebar();
+    document.getElementById("viewer-main").scrollTop = 0;
+    window.scrollTo({top:0});
+  }, 230);
+}
+
+/* ---------------- mobile sidebar ---------------- */
+const sidebar = document.getElementById("viewer-sidebar");
+const sbBackdrop = document.getElementById("sidebar-backdrop");
+function openSidebar(){
+  sidebar.classList.add("open");
+  sbBackdrop.classList.add("open");
+  requestAnimationFrame(()=>sbBackdrop.classList.add("visible"));
+}
+function closeSidebar(){
+  sidebar.classList.remove("open");
+  sbBackdrop.classList.remove("visible");
+  setTimeout(()=>sbBackdrop.classList.remove("open"),300);
+}
+document.getElementById("hamburger").addEventListener("click", ()=>{
+  sidebar.classList.contains("open") ? closeSidebar() : openSidebar();
+});
+sbBackdrop.addEventListener("click", closeSidebar);
+
+/* ---------------- payment modal ---------------- */
+/* REPLACE WITH PRODUCTION SERVICE: launch a real Stripe Checkout session here.
+   The webhook handler should update the GHL entitlements field, and the portal
+   should refresh entitlements on return. */
+const modalBackdrop = document.getElementById("modal-backdrop");
+const payModal = document.getElementById("pay-modal");
+let pendingUnlock = null;
+
+function openPayModal(sectionId){
+  pendingUnlock = sectionId;
+  const sec = ADDONS.find(a=>a.id===sectionId);
+  document.getElementById("modal-item-name").textContent = sec ? sec.title : "Add-On";
+  payModal.classList.remove("success");
+  const payBtn = document.getElementById("pay-btn");
+  payBtn.disabled = false;
+  payBtn.innerHTML = "Pay $49";
+  modalBackdrop.classList.add("open");
+  requestAnimationFrame(()=>modalBackdrop.classList.add("visible"));
+}
+function closePayModal(){
+  modalBackdrop.classList.remove("visible");
+  setTimeout(()=>modalBackdrop.classList.remove("open"),300);
+}
+document.getElementById("modal-close").addEventListener("click", closePayModal);
+modalBackdrop.addEventListener("click", e=>{ if(e.target===modalBackdrop) closePayModal(); });
+
+document.getElementById("pay-btn").addEventListener("click", ()=>{
+  const btn = document.getElementById("pay-btn");
+  btn.disabled = true;
+  btn.innerHTML = `<span class="spinner"></span>Processing…`;
+  setTimeout(()=>{
+    payModal.classList.add("success");
+    setTimeout(()=>{
+      if(pendingUnlock){
+        owned.add(pendingUnlock);
+        renderAddonGrid();
+        renderSidebar();
+        if(currentView==="viewer"){
+          selectSection(pendingUnlock);
+        }
+        pendingUnlock = null;
+      }
+      closePayModal();
+    }, 1100);
+  }, 2000); // simulated payment processing
+});
+
+/* ---------------- init ---------------- */
+renderAddonGrid();
+renderHistory();
+renderProfile();
+renderSidebar();
+selectSection("behavior");
+showScreen(screens.login);
+</script>
+</body>
+</html>
